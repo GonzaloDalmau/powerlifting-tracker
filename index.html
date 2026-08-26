@@ -106,6 +106,23 @@
 
   <div class="page" id="page-weight">
     <h2>Weight class</h2>
+
+    <div class="card" style="margin-bottom:24px;">
+      <label>Target weight class (kg)</label>
+      <div style="display:flex; gap:8px; margin-bottom:16px;">
+        <input type="number" id="target-class" placeholder="e.g. 105">
+        <button class="secondary" onclick="saveTargetClass()">Save target</button>
+      </div>
+      <div class="stats" style="grid-template-columns: repeat(3, 1fr); margin-bottom:0;">
+        <div class="stat"><div class="label">Current weight</div><div class="value" id="wc-current">-</div></div>
+        <div class="stat"><div class="label">Target class</div><div class="value" id="wc-target">-</div></div>
+        <div class="stat"><div class="label">To go</div><div class="value" id="wc-togo">-</div></div>
+      </div>
+      <div id="wc-bar-container" style="height:8px; background:#eee; border-radius:4px; overflow:hidden; margin-top:16px;">
+        <div id="wc-bar" style="width:0%; height:100%; background:#639922;"></div>
+      </div>
+    </div>
+
     <div class="card">
       <label>Log a weigh-in (kg)</label>
       <div style="display:flex; gap:8px;">
@@ -263,6 +280,14 @@
   }
 
   // ---- weight class ----
+  function getTargetClass() { return parseFloat(localStorage.getItem('targetClass')) || null; }
+  function saveTargetClass() {
+    const value = parseFloat(document.getElementById('target-class').value);
+    if (!value) { alert('Enter a target weight in kg.'); return; }
+    localStorage.setItem('targetClass', value);
+    renderWeight();
+  }
+
   function addWeighIn() {
     const date = document.getElementById('weigh-date').value;
     const value = parseFloat(document.getElementById('weigh-value').value);
@@ -283,6 +308,39 @@
       tr.innerHTML = `<td>${w.date}</td><td>${w.value}</td>`;
       tbody.appendChild(tr);
     });
+
+    const target = getTargetClass();
+    document.getElementById('target-class').value = target || '';
+    document.getElementById('wc-target').textContent = target ? target + ' kg' : '-';
+
+    if (weighIns.length === 0) {
+      document.getElementById('wc-current').textContent = '-';
+      document.getElementById('wc-togo').textContent = '-';
+      document.getElementById('wc-bar').style.width = '0%';
+      return;
+    }
+
+    // sort by date to find the earliest (starting weight) and latest (current)
+    const sorted = weighIns.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+    const startWeight = sorted[0].value;
+    const currentWeight = sorted[sorted.length - 1].value;
+    document.getElementById('wc-current').textContent = currentWeight + ' kg';
+
+    if (!target) {
+      document.getElementById('wc-togo').textContent = '-';
+      document.getElementById('wc-bar').style.width = '0%';
+      return;
+    }
+
+    const toGo = Math.max(0, currentWeight - target).toFixed(1);
+    document.getElementById('wc-togo').textContent = toGo + ' kg';
+
+    // progress: how much of the (startWeight -> target) distance has been covered
+    const totalDistance = startWeight - target;
+    const covered = startWeight - currentWeight;
+    let percent = totalDistance > 0 ? (covered / totalDistance) * 100 : 100;
+    percent = Math.max(0, Math.min(100, percent));
+    document.getElementById('wc-bar').style.width = percent + '%';
   }
 
   // initial paint
