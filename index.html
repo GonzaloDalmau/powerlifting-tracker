@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lift log</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, sans-serif; display: flex; min-height: 100vh; background: #f4f4f2; }
+
+  .sidebar { width: 200px; background: #1c1c1a; padding: 24px 12px; }
+  .sidebar h1 { color: white; font-size: 18px; margin: 0 0 24px 12px; }
+  .nav-btn { display: block; width: 100%; text-align: left; background: none; border: none; color: #ccc;
+             padding: 10px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-bottom: 4px; }
+  .nav-btn:hover { background: #2a2a28; }
+  .nav-btn.active { background: #3a3a37; color: white; }
+
+  .main { flex: 1; padding: 32px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  h2 { margin-top: 0; }
+  .card { background: white; border-radius: 8px; padding: 16px; border: 1px solid #ddd; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat { background: white; border-radius: 8px; padding: 12px; text-align: center; border: 1px solid #ddd; }
+  .stat .label { font-size: 13px; color: #777; }
+  .stat .value { font-size: 20px; font-weight: bold; }
+
+  label { display: block; font-size: 13px; color: #555; margin-bottom: 4px; }
+  input, select { width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; }
+  .set-row { display: grid; grid-template-columns: 24px 1fr 1fr 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }
+  button.action { background: #1c1c1a; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; }
+  button.secondary { background: white; border: 1px solid #ccc; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h1>lift log</h1>
+  <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+  <button class="nav-btn" data-page="log">Log session</button>
+  <button class="nav-btn" data-page="history">History</button>
+  <button class="nav-btn" data-page="weight">Weight class</button>
+</div>
+
+<div class="main">
+
+  <div class="page active" id="page-dashboard">
+    <h2>Dashboard</h2>
+    <div class="stats">
+      <div class="stat"><div class="label">Squat max</div><div class="value" id="max-squat">-</div></div>
+      <div class="stat"><div class="label">Bench max</div><div class="value" id="max-bench">-</div></div>
+      <div class="stat"><div class="label">Deadlift max</div><div class="value" id="max-deadlift">-</div></div>
+      <div class="stat"><div class="label">Sessions logged</div><div class="value" id="session-count">0</div></div>
+    </div>
+    <div class="card" id="estimator-card" style="margin-bottom:24px; display:none;">
+      <h3>Estimate your 1-rep max</h3>
+      <p style="font-size:13px; color:#777; margin-top:-8px;">No recorded max yet for one or more lifts? Enter any set you've done and get an estimate (Epley formula).</p>
+      <div style="display:flex; gap:8px; align-items:flex-end;">
+        <div style="flex:1;"><label>Lift</label><select id="est-lift"></select></div>
+        <div style="flex:1;"><label>Weight (lb)</label><input type="number" id="est-weight"></div>
+        <div style="flex:1;"><label>Reps</label><input type="number" id="est-reps"></div>
+        <button class="action" onclick="estimateMax()" style="margin-bottom:12px;">Estimate</button>
+      </div>
+      <div id="est-result" style="font-size:14px; margin-top:4px;"></div>
+    </div>
+    <div class="card">
+      <h3>Recent sessions</h3>
+      <table id="recent-table">
+        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="page" id="page-log">
+    <h2>Log session</h2>
+    <div class="card">
+      <label>Date</label>
+      <input type="date" id="log-date">
+      <label>Lift</label>
+      <select id="log-lift">
+        <option>squat</option>
+        <option>bench</option>
+        <option>deadlift</option>
+        <option>accessory</option>
+      </select>
+      <div id="sets-container"></div>
+      <button class="secondary" onclick="addSetRow()">+ add set</button>
+      <br><br>
+      <button class="action" onclick="saveSession()">Save session</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-history">
+    <h2>History</h2>
+    <div class="card">
+      <table id="history-table">
+        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="page" id="page-weight">
+    <h2>Weight class</h2>
+    <div class="card">
+      <label>Log a weigh-in (kg)</label>
+      <div style="display:flex; gap:8px;">
+        <input type="date" id="weigh-date">
+        <input type="number" id="weigh-value" placeholder="e.g. 117.4">
+        <button class="action" onclick="addWeighIn()">Add</button>
+      </div>
+      <br>
+      <table id="weight-table">
+        <thead><tr><th>Date</th><th>Weight (kg)</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ---- navigation ----
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('page-' + btn.dataset.page).classList.add('active');
+      if (btn.dataset.page === 'dashboard') renderDashboard();
+      if (btn.dataset.page === 'history') renderHistory();
+      if (btn.dataset.page === 'weight') renderWeight();
+    });
+  });
+
+  // ---- data helpers (localStorage) ----
+  function getSessions() { return JSON.parse(localStorage.getItem('sessions') || '[]'); }
+  function saveSessions(s) { localStorage.setItem('sessions', JSON.stringify(s)); }
+  function getWeighIns() { return JSON.parse(localStorage.getItem('weighIns') || '[]'); }
+  function saveWeighIns(w) { localStorage.setItem('weighIns', JSON.stringify(w)); }
+
+  // ---- log session page ----
+  let setCount = 0;
+  function addSetRow() {
+    setCount++;
+    const container = document.getElementById('sets-container');
+    const row = document.createElement('div');
+    row.className = 'set-row';
+    row.innerHTML = `
+      <span>${setCount}</span>
+      <input type="number" placeholder="weight (lb)" class="set-weight">
+      <input type="number" placeholder="reps" class="set-reps">
+      <input type="number" placeholder="RPE" class="set-rpe">
+    `;
+    container.appendChild(row);
+  }
+  addSetRow(); // start with one row
+
+  function saveSession() {
+    const date = document.getElementById('log-date').value;
+    const lift = document.getElementById('log-lift').value;
+    if (!date) { alert('Pick a date first.'); return; }
+
+    const rows = document.querySelectorAll('#sets-container .set-row');
+    const sets = [];
+    rows.forEach(row => {
+      const weight = parseFloat(row.querySelector('.set-weight').value) || 0;
+      const reps = parseInt(row.querySelector('.set-reps').value) || 0;
+      const rpe = parseFloat(row.querySelector('.set-rpe').value) || null;
+      if (weight > 0 && reps > 0) sets.push({ weight, reps, rpe });
+    });
+    if (sets.length === 0) { alert('Add at least one set with weight and reps.'); return; }
+
+    const sessions = getSessions();
+    sessions.push({ date, lift, sets });
+    saveSessions(sessions);
+
+    // reset form
+    document.getElementById('sets-container').innerHTML = '';
+    setCount = 0;
+    addSetRow();
+    alert('Session saved.');
+  }
+
+  // ---- dashboard ----
+  function getEstimatedMaxes() { return JSON.parse(localStorage.getItem('estimatedMaxes') || '{}'); }
+  function saveEstimatedMaxes(m) { localStorage.setItem('estimatedMaxes', JSON.stringify(m)); }
+
+  function renderDashboard() {
+    const sessions = getSessions();
+    const maxByLift = {};
+    sessions.forEach(s => {
+      s.sets.forEach(set => {
+        if (!maxByLift[s.lift] || set.weight > maxByLift[s.lift]) maxByLift[s.lift] = set.weight;
+      });
+    });
+    const estimated = getEstimatedMaxes();
+    const mainLifts = ['squat', 'bench', 'deadlift'];
+
+    mainLifts.forEach(lift => {
+      const el = document.getElementById('max-' + lift);
+      if (maxByLift[lift]) {
+        el.textContent = maxByLift[lift] + ' lb';
+      } else if (estimated[lift]) {
+        el.textContent = estimated[lift] + ' lb*';
+      } else {
+        el.textContent = '-';
+      }
+    });
+    document.getElementById('session-count').textContent = sessions.length;
+
+    // show the estimator card only if a main lift is missing a real recorded max
+    const missingLift = mainLifts.some(lift => !maxByLift[lift]);
+    document.getElementById('estimator-card').style.display = missingLift ? 'block' : 'none';
+    if (missingLift) {
+      const select = document.getElementById('est-lift');
+      select.innerHTML = mainLifts.filter(lift => !maxByLift[lift])
+        .map(lift => `<option value="${lift}">${lift}</option>`).join('');
+    }
+
+    const tbody = document.querySelector('#recent-table tbody');
+    tbody.innerHTML = '';
+    sessions.slice(-5).reverse().forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${s.date}</td><td>${s.lift}</td><td>${s.sets.length}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function estimateMax() {
+    const lift = document.getElementById('est-lift').value;
+    const weight = parseFloat(document.getElementById('est-weight').value);
+    const reps = parseInt(document.getElementById('est-reps').value);
+    if (!weight || !reps) { alert('Enter both a weight and a rep count.'); return; }
+
+    // Epley formula: 1RM = weight * (1 + reps / 30)
+    const estimate = Math.round(weight * (1 + reps / 30));
+
+    const estimated = getEstimatedMaxes();
+    estimated[lift] = estimate;
+    saveEstimatedMaxes(estimated);
+
+    document.getElementById('est-result').textContent =
+      `Estimated ${lift} 1RM: ${estimate} lb (marked with * until you log an actual max set)`;
+    renderDashboard();
+  }
+
+  // ---- history ----
+  function renderHistory() {
+    const sessions = getSessions();
+    const tbody = document.querySelector('#history-table tbody');
+    tbody.innerHTML = '';
+    sessions.slice().reverse().forEach(s => {
+      const top = s.sets.reduce((max, set) => set.weight > max.weight ? set : max, s.sets[0]);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${s.date}</td><td>${s.lift}</td><td>${s.sets.length}</td><td>${top.weight}x${top.reps}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ---- weight class ----
+  function addWeighIn() {
+    const date = document.getElementById('weigh-date').value;
+    const value = parseFloat(document.getElementById('weigh-value').value);
+    if (!date || !value) { alert('Enter a date and weight.'); return; }
+    const weighIns = getWeighIns();
+    weighIns.push({ date, value });
+    saveWeighIns(weighIns);
+    document.getElementById('weigh-value').value = '';
+    renderWeight();
+  }
+
+  function renderWeight() {
+    const weighIns = getWeighIns();
+    const tbody = document.querySelector('#weight-table tbody');
+    tbody.innerHTML = '';
+    weighIns.slice().reverse().forEach(w => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${w.date}</td><td>${w.value}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // initial paint
+  renderDashboard();
+</script>
+
+</body>
+</html>
