@@ -158,6 +158,24 @@
 </div>
 
 <div class="main">
+  <div class="page active" id="page-auth">
+  <h2>Welcome to Lift Log</h2>
+  
+  <div class="card" style="max-width: 400px; margin: 0 auto;">
+    <h3 style="margin-top:0;">Log In or Sign Up</h3>
+    <label>Email</label>
+    <input type="email" id="auth-email" placeholder="coach@example.com">
+    
+    <label>Password</label>
+    <input type="password" id="auth-password" placeholder="••••••••">
+    
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+      <button class="action" onclick="loginUser()" style="flex: 1;">Log In</button>
+      <button class="secondary" onclick="registerUser()" style="flex: 1;">Sign Up</button>
+    </div>
+    <div id="auth-message" style="margin-top: 15px; font-size: 14px; color: var(--accent);"></div>
+  </div>
+</div>
 
   <div class="page active" id="page-dashboard">
     <h2>Dashboard</h2>
@@ -305,6 +323,62 @@
   });
 
   const API_BASE = 'https://powerlifting-tracker-production-7a3c.up.railway.app';
+  async function registerUser() {
+  const email = document.getElementById('auth-email').value;
+  const password = document.getElementById('auth-password').value;
+  const msgEl = document.getElementById('auth-message');
+
+  try {
+    const res = await fetch(`${API_BASE}/api/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    
+    if (res.ok) {
+      msgEl.style.color = 'var(--cut)';
+      msgEl.textContent = 'Account created! You can now log in.';
+    } else {
+      msgEl.style.color = 'var(--accent)';
+      msgEl.textContent = data.error || 'Registration failed.';
+    }
+  } catch (err) {
+    msgEl.textContent = 'Server error. Is the backend running?';
+  }
+}
+
+async function loginUser() {
+  const email = document.getElementById('auth-email').value;
+  const password = document.getElementById('auth-password').value;
+  const msgEl = document.getElementById('auth-message');
+
+  try {
+    const res = await fetch(`${API_BASE}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    
+    if (res.ok) {
+      // Save the secure token to the browser
+      localStorage.setItem('token', data.token);
+      
+      // Hide the login screen and show the dashboard
+      document.getElementById('page-auth').classList.remove('active');
+      document.getElementById('page-dashboard').classList.add('active');
+      
+      // Load the user's personal data
+      renderDashboard();
+    } else {
+      msgEl.style.color = 'var(--accent)';
+      msgEl.textContent = data.error || 'Invalid credentials.';
+    }
+  } catch (err) {
+    msgEl.textContent = 'Server error. Is the backend running?';
+  }
+}
 
   // ---- log session page ----
   let setCount = 0;
