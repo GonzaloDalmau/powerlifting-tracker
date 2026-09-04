@@ -30,9 +30,10 @@
   }
   h1, h2, h3, .display-num { font-family: 'Oswald', 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.03em; }
 
-  .sidebar { width: 210px; flex-shrink: 0; background: #101215; padding: 28px 14px; border-right: 1px solid var(--border); }
+  .sidebar { width: 210px; flex-shrink: 0; background: #101215; padding: 28px 14px; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
   .sidebar h1 { color: var(--text); font-size: 17px; margin: 0 0 28px 10px; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; }
   .sidebar h1 svg { flex-shrink: 0; }
+  .sidebar-spacer { flex: 1; }
   .hero-total { position: relative; overflow: hidden; }
   .hero-total svg.watermark { position: absolute; right: -10px; bottom: -14px; opacity: 0.08; width: 160px; }
   .media-card { background: var(--surface); border: 1px solid var(--border); padding: 0; margin-bottom: 20px; overflow: hidden; }
@@ -90,52 +91,17 @@
   .plate { width: 14px; border-radius: 2px; background: var(--cut); }
   .plate.remaining { background: transparent; border: 2px solid var(--border-strong); }
   .plates-more { align-self: center; font-size: 12px; color: var(--text-secondary); margin-left: 4px; }
+
   @media (max-width: 768px) {
-  /* Stacks the sidebar on top instead of the left */
-  body { 
-    flex-direction: column; 
+    body { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; padding: 16px; gap: 8px; }
+    .sidebar h1 { width: 100%; margin-bottom: 8px; }
+    .sidebar-spacer { display: none; }
+    .nav-btn { width: auto; flex: 1; text-align: center; border-left: none; border-bottom: 3px solid transparent; }
+    .nav-btn.active { border-left: none; border-bottom-color: var(--accent); }
+    .main { padding: 20px 15px; }
+    .stats { grid-template-columns: 1fr 1fr; }
   }
-  
-  /* Makes the sidebar a horizontal navigation menu */
-  .sidebar { 
-    width: 100%; 
-    border-right: none; 
-    border-bottom: 1px solid var(--border); 
-    display: flex; 
-    flex-wrap: wrap; 
-    padding: 16px; 
-    gap: 8px;
-  }
-  
-  .sidebar h1 { 
-    width: 100%; 
-    margin-bottom: 8px; 
-  }
-  
-  /* Turns sidebar buttons into top tabs */
-  .nav-btn { 
-    width: auto; 
-    flex: 1; 
-    text-align: center; 
-    border-left: none; 
-    border-bottom: 3px solid transparent; 
-  }
-  
-  .nav-btn.active { 
-    border-left: none; 
-    border-bottom-color: var(--accent); 
-  }
-  
-  /* Reduces padding for smaller phone screens */
-  .main { 
-    padding: 20px 15px; 
-  }
-  
-  /* Makes the 4 stats a 2x2 grid instead of squeezing them side-by-side */
-  .stats { 
-    grid-template-columns: 1fr 1fr; 
-  }
-}
 </style>
 </head>
 <body>
@@ -155,29 +121,29 @@
   <button class="nav-btn" data-page="log">Log session</button>
   <button class="nav-btn" data-page="history">History</button>
   <button class="nav-btn" data-page="weight">Weight class</button>
+  <div class="sidebar-spacer"></div>
+  <button class="nav-btn" onclick="logoutUser()" style="color: var(--accent);">Log out</button>
 </div>
 
 <div class="main">
-  <div class="page active" id="page-auth">
-  <h2>Welcome to Lift Log</h2>
-  
-  <div class="card" style="max-width: 400px; margin: 0 auto;">
-    <h3 style="margin-top:0;">Log In or Sign Up</h3>
-    <label>Email</label>
-    <input type="email" id="auth-email" placeholder="coach@example.com">
-    
-    <label>Password</label>
-    <input type="password" id="auth-password" placeholder="••••••••">
-    
-    <div style="display: flex; gap: 10px; margin-top: 15px;">
-      <button class="action" onclick="loginUser()" style="flex: 1;">Log In</button>
-      <button class="secondary" onclick="registerUser()" style="flex: 1;">Sign Up</button>
-    </div>
-    <div id="auth-message" style="margin-top: 15px; font-size: 14px; color: var(--accent);"></div>
-  </div>
-</div>
 
-  <div class="page active" id="page-dashboard">
+  <div class="page" id="page-auth">
+    <h2>Welcome to Lift Log</h2>
+    <div class="card" style="max-width: 400px; margin: 0 auto;">
+      <h3 style="margin-top:0;">Log In or Sign Up</h3>
+      <label>Email</label>
+      <input type="email" id="auth-email" placeholder="coach@example.com">
+      <label>Password</label>
+      <input type="password" id="auth-password" placeholder="••••••••">
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button class="action" onclick="loginUser()" style="flex: 1;">Log In</button>
+        <button class="secondary" onclick="registerUser()" style="flex: 1;">Sign Up</button>
+      </div>
+      <div id="auth-message" style="margin-top: 15px; font-size: 14px; color: var(--accent);"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-dashboard">
     <h2>Dashboard</h2>
     <div class="quote-bar"><span class="mark">Coach's note</span><span id="quote-text"></span></div>
 
@@ -195,15 +161,12 @@
       </div>
     </div>
 
-    <!-- Removed "display:none;" so it actually shows up -->
-<div class="media-card" id="clip-card">
-  <!-- Added 'autoplay' and 'playsinline', and a placeholder video source -->
-  <video id="deadlift-clip" autoplay loop muted playsinline controls>
-    <!-- Replace this URL with the path to your actual video file once you have it -->
-    <source src="C:\Users\carlo\Documents\powerlifting-tracker\deadlift.mp4" type="video/mp4">
-  </video>
-  <div class="media-caption">Form check — deadlift</div>
-</div>
+    <div class="media-card" id="clip-card">
+      <video id="deadlift-clip" autoplay loop muted playsinline controls>
+        <source src="deadlift.mp4" type="video/mp4">
+      </video>
+      <div class="media-caption">Form check — deadlift</div>
+    </div>
 
     <div class="stats">
       <div class="stat" id="stat-squat"><div class="label">Squat max</div><div class="value" id="max-squat">-</div></div>
@@ -296,6 +259,85 @@
 </div>
 
 <script>
+  const API_BASE = 'https://powerlifting-tracker-production-7a3c.up.railway.app';
+
+  // ---- auth helpers ----
+  function getToken() { return localStorage.getItem('token'); }
+  function authHeaders() {
+    const token = getToken();
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  }
+  function showAuthPage() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-auth').classList.add('active');
+  }
+  function showApp() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-dashboard').classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.nav-btn[data-page="dashboard"]').classList.add('active');
+    renderDashboard();
+  }
+  function logoutUser() {
+    localStorage.removeItem('token');
+    showAuthPage();
+  }
+  // if a protected request comes back unauthorized, bounce to login
+  function handleAuthFailure(status) {
+    if (status === 401 || status === 403) {
+      localStorage.removeItem('token');
+      showAuthPage();
+      return true;
+    }
+    return false;
+  }
+
+  async function registerUser() {
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    const msgEl = document.getElementById('auth-message');
+    try {
+      const res = await fetch(`${API_BASE}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        msgEl.style.color = 'var(--cut)';
+        msgEl.textContent = 'Account created! You can now log in.';
+      } else {
+        msgEl.style.color = 'var(--accent)';
+        msgEl.textContent = data.error || 'Registration failed.';
+      }
+    } catch (err) {
+      msgEl.textContent = 'Server error. Is the backend running?';
+    }
+  }
+
+  async function loginUser() {
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    const msgEl = document.getElementById('auth-message');
+    try {
+      const res = await fetch(`${API_BASE}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        showApp();
+      } else {
+        msgEl.style.color = 'var(--accent)';
+        msgEl.textContent = data.error || 'Invalid credentials.';
+      }
+    } catch (err) {
+      msgEl.textContent = 'Server error. Is the backend running?';
+    }
+  }
+
   // ---- motivational quotes ----
   const QUOTES = [
     "Strength is built one honest rep at a time.",
@@ -310,7 +352,7 @@
   document.getElementById('quote-text').textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 
   // ---- navigation ----
-  document.querySelectorAll('.nav-btn').forEach(btn => {
+  document.querySelectorAll('.nav-btn[data-page]').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -321,64 +363,6 @@
       if (btn.dataset.page === 'weight') renderWeight();
     });
   });
-
-  const API_BASE = 'https://powerlifting-tracker-production-7a3c.up.railway.app';
-  async function registerUser() {
-  const email = document.getElementById('auth-email').value;
-  const password = document.getElementById('auth-password').value;
-  const msgEl = document.getElementById('auth-message');
-
-  try {
-    const res = await fetch(`${API_BASE}/api/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    
-    if (res.ok) {
-      msgEl.style.color = 'var(--cut)';
-      msgEl.textContent = 'Account created! You can now log in.';
-    } else {
-      msgEl.style.color = 'var(--accent)';
-      msgEl.textContent = data.error || 'Registration failed.';
-    }
-  } catch (err) {
-    msgEl.textContent = 'Server error. Is the backend running?';
-  }
-}
-
-async function loginUser() {
-  const email = document.getElementById('auth-email').value;
-  const password = document.getElementById('auth-password').value;
-  const msgEl = document.getElementById('auth-message');
-
-  try {
-    const res = await fetch(`${API_BASE}/api/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    
-    if (res.ok) {
-      // Save the secure token to the browser
-      localStorage.setItem('token', data.token);
-      
-      // Hide the login screen and show the dashboard
-      document.getElementById('page-auth').classList.remove('active');
-      document.getElementById('page-dashboard').classList.add('active');
-      
-      // Load the user's personal data
-      renderDashboard();
-    } else {
-      msgEl.style.color = 'var(--accent)';
-      msgEl.textContent = data.error || 'Invalid credentials.';
-    }
-  } catch (err) {
-    msgEl.textContent = 'Server error. Is the backend running?';
-  }
-}
 
   // ---- log session page ----
   let setCount = 0;
@@ -415,9 +399,10 @@ async function loginUser() {
     try {
       const res = await fetch(`${API_BASE}/api/sessions`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ session_date: date, lift_type: lift, sets })
       });
+      if (handleAuthFailure(res.status)) return;
       if (!res.ok) throw new Error('Server responded with an error');
 
       document.getElementById('sets-container').innerHTML = '';
@@ -439,7 +424,8 @@ async function loginUser() {
   async function renderDashboard() {
     let sessions = [];
     try {
-      const res = await fetch(`${API_BASE}/api/sessions`);
+      const res = await fetch(`${API_BASE}/api/sessions`, { headers: authHeaders() });
+      if (handleAuthFailure(res.status)) return;
       sessions = await res.json();
     } catch (err) {
       console.error(err);
@@ -531,7 +517,8 @@ async function loginUser() {
   async function renderHistory() {
     let sessions = [];
     try {
-      const res = await fetch(`${API_BASE}/api/sessions`);
+      const res = await fetch(`${API_BASE}/api/sessions`, { headers: authHeaders() });
+      if (handleAuthFailure(res.status)) return;
       sessions = await res.json();
     } catch (err) {
       console.error(err);
@@ -567,9 +554,10 @@ async function loginUser() {
     try {
       const res = await fetch(`${API_BASE}/api/weigh-ins`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ weigh_date: date, weight_kg: value })
       });
+      if (handleAuthFailure(res.status)) return;
       if (!res.ok) throw new Error('Server responded with an error');
       document.getElementById('weigh-value').value = '';
       renderWeight();
@@ -606,7 +594,8 @@ async function loginUser() {
   async function renderWeight() {
     let weighIns = [];
     try {
-      const res = await fetch(`${API_BASE}/api/weigh-ins`);
+      const res = await fetch(`${API_BASE}/api/weigh-ins`, { headers: authHeaders() });
+      if (handleAuthFailure(res.status)) return;
       weighIns = await res.json();
     } catch (err) {
       console.error(err);
@@ -648,8 +637,12 @@ async function loginUser() {
     renderPlates(toGo);
   }
 
-  // initial paint
-  renderDashboard();
+  // ---- initial paint: show login if no token, otherwise go straight to the app ----
+  if (getToken()) {
+    showApp();
+  } else {
+    showAuthPage();
+  }
 </script>
 
 </body>
