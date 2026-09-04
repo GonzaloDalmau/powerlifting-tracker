@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lift log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,6 +90,52 @@
   .plate { width: 14px; border-radius: 2px; background: var(--cut); }
   .plate.remaining { background: transparent; border: 2px solid var(--border-strong); }
   .plates-more { align-self: center; font-size: 12px; color: var(--text-secondary); margin-left: 4px; }
+  @media (max-width: 768px) {
+  /* Stacks the sidebar on top instead of the left */
+  body { 
+    flex-direction: column; 
+  }
+  
+  /* Makes the sidebar a horizontal navigation menu */
+  .sidebar { 
+    width: 100%; 
+    border-right: none; 
+    border-bottom: 1px solid var(--border); 
+    display: flex; 
+    flex-wrap: wrap; 
+    padding: 16px; 
+    gap: 8px;
+  }
+  
+  .sidebar h1 { 
+    width: 100%; 
+    margin-bottom: 8px; 
+  }
+  
+  /* Turns sidebar buttons into top tabs */
+  .nav-btn { 
+    width: auto; 
+    flex: 1; 
+    text-align: center; 
+    border-left: none; 
+    border-bottom: 3px solid transparent; 
+  }
+  
+  .nav-btn.active { 
+    border-left: none; 
+    border-bottom-color: var(--accent); 
+  }
+  
+  /* Reduces padding for smaller phone screens */
+  .main { 
+    padding: 20px 15px; 
+  }
+  
+  /* Makes the 4 stats a 2x2 grid instead of squeezing them side-by-side */
+  .stats { 
+    grid-template-columns: 1fr 1fr; 
+  }
+}
 </style>
 </head>
 <body>
