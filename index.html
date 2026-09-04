@@ -3,42 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <title>Lift log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --bg: #15171b;
+    --surface: #1d2025;
+    --surface-2: #262a30;
+    --border: #383d44;
+    --border-strong: #4a5058;
+    --text: #ece9e2;
+    --text-secondary: #9aa0a8;
+    --text-muted: #6b7077;
+    --accent: #d6455a;
+    --accent-dim: #8a3340;
+    --gold: #c9a227;
+    --cut: #4c9a6a;
+  }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: Arial, sans-serif; display: flex; min-height: 100vh; background: #f4f4f2; }
+  body {
+    margin: 0; display: flex; min-height: 100vh;
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', Arial, sans-serif;
+  }
+  h1, h2, h3, .display-num { font-family: 'Oswald', 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.03em; }
 
-  .sidebar { width: 200px; background: #1c1c1a; padding: 24px 12px; }
-  .sidebar h1 { color: white; font-size: 18px; margin: 0 0 24px 12px; }
-  .nav-btn { display: block; width: 100%; text-align: left; background: none; border: none; color: #ccc;
-             padding: 10px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-bottom: 4px; }
-  .nav-btn:hover { background: #2a2a28; }
-  .nav-btn.active { background: #3a3a37; color: white; }
+  .sidebar { width: 210px; flex-shrink: 0; background: #101215; padding: 28px 14px; border-right: 1px solid var(--border); }
+  .sidebar h1 { color: var(--text); font-size: 17px; margin: 0 0 28px 10px; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; }
+  .sidebar h1 svg { flex-shrink: 0; }
+  .hero-total { position: relative; overflow: hidden; }
+  .hero-total svg.watermark { position: absolute; right: -10px; bottom: -14px; opacity: 0.08; width: 160px; }
+  .media-card { background: var(--surface); border: 1px solid var(--border); padding: 0; margin-bottom: 20px; overflow: hidden; }
+  .media-card video { display: block; width: 100%; max-height: 320px; object-fit: cover; background: #000; }
+  .media-caption { padding: 10px 14px; font-size: 12px; color: var(--text-secondary); letter-spacing: 0.03em; }
+  .nav-btn { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-secondary);
+             padding: 10px 12px; cursor: pointer; font-size: 14px; margin-bottom: 2px; border-left: 3px solid transparent;
+             font-family: 'Inter', sans-serif; }
+  .nav-btn:hover { background: var(--surface); color: var(--text); }
+  .nav-btn.active { background: var(--surface); color: var(--text); border-left-color: var(--accent); font-weight: 600; }
 
-  .main { flex: 1; padding: 32px; }
+  .main { flex: 1; padding: 36px 40px; max-width: 1100px; }
   .page { display: none; }
   .page.active { display: block; }
 
-  h2 { margin-top: 0; }
-  .card { background: white; border-radius: 8px; padding: 16px; border: 1px solid #ddd; }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-  .stat { background: white; border-radius: 8px; padding: 12px; text-align: center; border: 1px solid #ddd; }
-  .stat .label { font-size: 13px; color: #777; }
-  .stat .value { font-size: 20px; font-weight: bold; }
+  h2 { margin: 0 0 20px; font-size: 24px; }
 
-  label { display: block; font-size: 13px; color: #555; margin-bottom: 4px; }
-  input, select { width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; }
+  .quote-bar {
+    background: var(--surface); border-left: 3px solid var(--gold); padding: 14px 18px;
+    margin-bottom: 24px; font-size: 14px; color: var(--text-secondary); font-style: italic;
+  }
+  .quote-bar span.mark { color: var(--gold); font-style: normal; font-weight: 600; margin-right: 6px; }
+
+  .hero-total { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; margin-bottom: 20px;
+    display: flex; align-items: baseline; justify-content: space-between; }
+  .hero-total .label { font-size: 13px; color: var(--text-secondary); letter-spacing: 0.08em; }
+  .hero-total .display-num { font-size: 40px; color: var(--text); font-weight: 700; }
+  .hero-total .display-num small { font-size: 16px; color: var(--text-secondary); font-weight: 500; text-transform: none; letter-spacing: 0; }
+
+  .card { background: var(--surface); padding: 18px; border: 1px solid var(--border); margin-bottom: 20px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stat { background: var(--surface); padding: 14px; text-align: center; border: 1px solid var(--border); border-top: 3px solid var(--border-strong); position: relative; }
+  .stat.has-pr { border-top-color: var(--accent); }
+  .stat .label { font-size: 12px; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; }
+  .stat .value { font-size: 22px; font-weight: 700; font-family: 'Oswald', sans-serif; margin-top: 2px; }
+  .pr-chip { position: absolute; top: -9px; right: 8px; background: var(--accent); color: #fff; font-size: 10px;
+             padding: 2px 6px; letter-spacing: 0.05em; font-weight: 600; }
+
+  label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+  input, select { width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid var(--border); background: var(--surface-2);
+    color: var(--text); font-family: 'Inter', sans-serif; }
+  input::placeholder { color: var(--text-muted); }
   .set-row { display: grid; grid-template-columns: 24px 1fr 1fr 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }
-  button.action { background: #1c1c1a; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; }
-  button.secondary { background: white; border: 1px solid #ccc; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+  button { font-family: 'Inter', sans-serif; }
+  button.action { background: var(--accent); color: #fff; border: none; padding: 10px 18px; cursor: pointer; font-weight: 600; letter-spacing: 0.03em; }
+  button.action:hover { background: #c53a4e; }
+  button.secondary { background: transparent; border: 1px solid var(--border-strong); color: var(--text); padding: 8px 14px; cursor: pointer; }
+  button.secondary:hover { border-color: var(--text-secondary); }
 
   table { width: 100%; border-collapse: collapse; }
-  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 6px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  th { color: var(--text-secondary); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .plates-row { display: flex; align-items: flex-end; gap: 6px; margin: 18px 0 6px; min-height: 46px; }
+  .plate { width: 14px; border-radius: 2px; background: var(--cut); }
+  .plate.remaining { background: transparent; border: 2px solid var(--border-strong); }
+  .plates-more { align-self: center; font-size: 12px; color: var(--text-secondary); margin-left: 4px; }
 </style>
 </head>
 <body>
 
 <div class="sidebar">
-  <h1>lift log</h1>
+  <h1>
+    <svg width="20" height="20" viewBox="0 0 48 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="9" width="4" height="6" fill="#d6455a"/>
+      <rect x="9" y="6" width="3" height="12" fill="#d6455a"/>
+      <rect x="12" y="11" width="24" height="2" fill="#9aa0a8"/>
+      <rect x="36" y="6" width="3" height="12" fill="#d6455a"/>
+      <rect x="40" y="9" width="4" height="6" fill="#d6455a"/>
+    </svg>
+    Lift Log
+  </h1>
   <button class="nav-btn active" data-page="dashboard">Dashboard</button>
   <button class="nav-btn" data-page="log">Log session</button>
   <button class="nav-btn" data-page="history">History</button>
@@ -49,25 +114,46 @@
 
   <div class="page active" id="page-dashboard">
     <h2>Dashboard</h2>
+    <div class="quote-bar"><span class="mark">Coach's note</span><span id="quote-text"></span></div>
+
+    <div class="hero-total">
+      <svg class="watermark" viewBox="0 0 48 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="9" width="4" height="6" fill="currentColor"/>
+        <rect x="9" y="6" width="3" height="12" fill="currentColor"/>
+        <rect x="12" y="11" width="24" height="2" fill="currentColor"/>
+        <rect x="36" y="6" width="3" height="12" fill="currentColor"/>
+        <rect x="40" y="9" width="4" height="6" fill="currentColor"/>
+      </svg>
+      <div>
+        <div class="label">Estimated total</div>
+        <div class="display-num" id="hero-total">- <small>lb</small></div>
+      </div>
+    </div>
+
+    <div class="media-card" id="clip-card" style="display:none;">
+      <video id="deadlift-clip" controls muted loop></video>
+      <div class="media-caption">Form check — deadlift</div>
+    </div>
+
     <div class="stats">
-      <div class="stat"><div class="label">Squat max</div><div class="value" id="max-squat">-</div></div>
-      <div class="stat"><div class="label">Bench max</div><div class="value" id="max-bench">-</div></div>
-      <div class="stat"><div class="label">Deadlift max</div><div class="value" id="max-deadlift">-</div></div>
+      <div class="stat" id="stat-squat"><div class="label">Squat max</div><div class="value" id="max-squat">-</div></div>
+      <div class="stat" id="stat-bench"><div class="label">Bench max</div><div class="value" id="max-bench">-</div></div>
+      <div class="stat" id="stat-deadlift"><div class="label">Deadlift max</div><div class="value" id="max-deadlift">-</div></div>
       <div class="stat"><div class="label">Sessions logged</div><div class="value" id="session-count">0</div></div>
     </div>
-    <div class="card" id="estimator-card" style="margin-bottom:24px; display:none;">
-      <h3>Estimate your 1-rep max</h3>
-      <p style="font-size:13px; color:#777; margin-top:-8px;">No recorded max yet for one or more lifts? Enter any set you've done and get an estimate (Epley formula).</p>
+    <div class="card" id="estimator-card" style="margin-bottom:20px; display:none;">
+      <h3 style="margin-top:0;">Estimate your 1-rep max</h3>
+      <p style="font-size:13px; color:var(--text-secondary); margin-top:-8px; font-style:normal;">No recorded max yet for one or more lifts? Enter any set you've done and get an estimate (Epley formula).</p>
       <div style="display:flex; gap:8px; align-items:flex-end;">
         <div style="flex:1;"><label>Lift</label><select id="est-lift"></select></div>
         <div style="flex:1;"><label>Weight (lb)</label><input type="number" id="est-weight"></div>
         <div style="flex:1;"><label>Reps</label><input type="number" id="est-reps"></div>
         <button class="action" onclick="estimateMax()" style="margin-bottom:12px;">Estimate</button>
       </div>
-      <div id="est-result" style="font-size:14px; margin-top:4px;"></div>
+      <div id="est-result" style="font-size:14px; margin-top:4px; color: var(--gold);"></div>
     </div>
     <div class="card">
-      <h3>Recent sessions</h3>
+      <h3 style="margin-top:0;">Recent sessions</h3>
       <table id="recent-table">
         <thead><tr><th>Date</th><th>Lift</th><th>Sets</th></tr></thead>
         <tbody></tbody>
@@ -107,7 +193,7 @@
   <div class="page" id="page-weight">
     <h2>Weight class</h2>
 
-    <div class="card" style="margin-bottom:24px;">
+    <div class="card" style="margin-bottom:20px;">
       <label>Target weight class (kg)</label>
       <div style="display:flex; gap:8px; margin-bottom:16px;">
         <input type="number" id="target-class" placeholder="e.g. 105">
@@ -118,9 +204,8 @@
         <div class="stat"><div class="label">Target class</div><div class="value" id="wc-target">-</div></div>
         <div class="stat"><div class="label">To go</div><div class="value" id="wc-togo">-</div></div>
       </div>
-      <div id="wc-bar-container" style="height:8px; background:#eee; border-radius:4px; overflow:hidden; margin-top:16px;">
-        <div id="wc-bar" style="width:0%; height:100%; background:#639922;"></div>
-      </div>
+      <div class="plates-row" id="wc-plates"></div>
+      <div style="font-size:11px; color:var(--text-muted);">each plate = 5kg toward your target</div>
     </div>
 
     <div class="card">
@@ -141,6 +226,19 @@
 </div>
 
 <script>
+  // ---- motivational quotes ----
+  const QUOTES = [
+    "Strength is built one honest rep at a time.",
+    "The bar doesn't care about your excuses.",
+    "Discipline is choosing the plates when no one's watching.",
+    "Every kilogram cut is a rep you won't have to fight for on the platform.",
+    "Chalk up. Set up. Show up.",
+    "Progress is a number on the bar, not a feeling in the mirror.",
+    "The iron is patient. Be patient with it.",
+    "Meet day rewards the sessions nobody saw."
+  ];
+  document.getElementById('quote-text').textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+
   // ---- navigation ----
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -154,11 +252,7 @@
     });
   });
 
-  // ---- data helpers (localStorage) ----
-  function getSessions() { return JSON.parse(localStorage.getItem('sessions') || '[]'); }
-  function saveSessions(s) { localStorage.setItem('sessions', JSON.stringify(s)); }
-  function getWeighIns() { return JSON.parse(localStorage.getItem('weighIns') || '[]'); }
-  function saveWeighIns(w) { localStorage.setItem('weighIns', JSON.stringify(w)); }
+  const API_BASE = 'https://powerlifting-tracker-production-7a3c.up.railway.app';
 
   // ---- log session page ----
   let setCount = 0;
@@ -175,9 +269,7 @@
     `;
     container.appendChild(row);
   }
-  addSetRow(); // start with one row
-
-  const API_BASE = 'https://powerlifting-tracker-production-7a3c.up.railway.app';
+  addSetRow();
 
   async function saveSession() {
     const date = document.getElementById('log-date').value;
@@ -202,7 +294,6 @@
       });
       if (!res.ok) throw new Error('Server responded with an error');
 
-      // reset form
       document.getElementById('sets-container').innerHTML = '';
       setCount = 0;
       addSetRow();
@@ -216,6 +307,8 @@
   // ---- dashboard ----
   function getEstimatedMaxes() { return JSON.parse(localStorage.getItem('estimatedMaxes') || '{}'); }
   function saveEstimatedMaxes(m) { localStorage.setItem('estimatedMaxes', JSON.stringify(m)); }
+  function getKnownPRs() { return JSON.parse(localStorage.getItem('knownPRs') || '{}'); }
+  function saveKnownPRs(p) { localStorage.setItem('knownPRs', JSON.stringify(p)); }
 
   async function renderDashboard() {
     let sessions = [];
@@ -237,20 +330,42 @@
     });
     const estimated = getEstimatedMaxes();
     const mainLifts = ['squat', 'bench', 'deadlift'];
+    const knownPRs = getKnownPRs();
+    let newKnownPRs = { ...knownPRs };
 
+    let total = 0;
+    let anyReal = false;
     mainLifts.forEach(lift => {
       const el = document.getElementById('max-' + lift);
+      const statEl = document.getElementById('stat-' + lift);
+      statEl.classList.remove('has-pr');
+      const existingChip = statEl.querySelector('.pr-chip');
+      if (existingChip) existingChip.remove();
+
       if (maxByLift[lift]) {
         el.textContent = maxByLift[lift] + ' lb';
+        total += maxByLift[lift];
+        anyReal = true;
+        if (!knownPRs[lift] || maxByLift[lift] > knownPRs[lift]) {
+          statEl.classList.add('has-pr');
+          const chip = document.createElement('div');
+          chip.className = 'pr-chip';
+          chip.textContent = 'NEW PR';
+          statEl.appendChild(chip);
+        }
+        newKnownPRs[lift] = maxByLift[lift];
       } else if (estimated[lift]) {
         el.textContent = estimated[lift] + ' lb*';
+        total += estimated[lift];
       } else {
         el.textContent = '-';
       }
     });
+    saveKnownPRs(newKnownPRs);
+    document.getElementById('hero-total').innerHTML = (total > 0 ? total : '-') + ' <small>lb' + (anyReal ? '' : ' (est.)') + '</small>';
+
     document.getElementById('session-count').textContent = sessions.length;
 
-    // show the estimator card only if a main lift is missing a real recorded max
     const missingLift = mainLifts.some(lift => !maxByLift[lift]);
     document.getElementById('estimator-card').style.display = missingLift ? 'block' : 'none';
     if (missingLift) {
@@ -261,7 +376,6 @@
 
     const tbody = document.querySelector('#recent-table tbody');
     tbody.innerHTML = '';
-    // sessions come back newest-first from the API, so just take the first 5
     sessions.slice(0, 5).forEach(s => {
       const tr = document.createElement('tr');
       const dateOnly = s.session_date.slice(0, 10);
@@ -276,7 +390,6 @@
     const reps = parseInt(document.getElementById('est-reps').value);
     if (!weight || !reps) { alert('Enter both a weight and a rep count.'); return; }
 
-    // Epley formula: 1RM = weight * (1 + reps / 30)
     const estimate = Math.round(weight * (1 + reps / 30));
 
     const estimated = getEstimatedMaxes();
@@ -289,7 +402,7 @@
   }
 
   // ---- history ----
-      async function renderHistory() {
+  async function renderHistory() {
     let sessions = [];
     try {
       const res = await fetch(`${API_BASE}/api/sessions`);
@@ -311,8 +424,7 @@
     });
   }
 
-    // ---- weight class ----
-  // target class still stored locally for now (no dedicated API route for it)
+  // ---- weight class ----
   function getTargetClass() { return parseFloat(localStorage.getItem('targetClass')) || null; }
   function saveTargetClass() {
     const value = parseFloat(document.getElementById('target-class').value);
@@ -341,6 +453,30 @@
     }
   }
 
+  function renderPlates(toGo) {
+    const container = document.getElementById('wc-plates');
+    container.innerHTML = '';
+    if (toGo <= 0) {
+      container.innerHTML = '<div style="color:var(--cut); font-weight:600;">Target reached — great cut.</div>';
+      return;
+    }
+    const plateCount = Math.ceil(toGo / 5);
+    const shown = Math.min(plateCount, 10);
+    for (let i = 0; i < shown; i++) {
+      const plate = document.createElement('div');
+      plate.className = 'plate remaining';
+      const heightPx = 46 - (i % 4) * 4;
+      plate.style.height = heightPx + 'px';
+      container.appendChild(plate);
+    }
+    if (plateCount > shown) {
+      const more = document.createElement('div');
+      more.className = 'plates-more';
+      more.textContent = `+${plateCount - shown} more`;
+      container.appendChild(more);
+    }
+  }
+
   async function renderWeight() {
     let weighIns = [];
     try {
@@ -354,7 +490,6 @@
 
     const tbody = document.querySelector('#weight-table tbody');
     tbody.innerHTML = '';
-    // show newest first
     weighIns.slice().reverse().forEach(w => {
       const dateOnly = w.weigh_date.slice(0, 10);
       const tr = document.createElement('tr');
@@ -369,29 +504,22 @@
     if (weighIns.length === 0) {
       document.getElementById('wc-current').textContent = '-';
       document.getElementById('wc-togo').textContent = '-';
-      document.getElementById('wc-bar').style.width = '0%';
+      renderPlates(0);
       return;
     }
 
-    // API already returns oldest-first, so first = starting weight, last = current
-    const startWeight = parseFloat(weighIns[0].weight_kg);
     const currentWeight = parseFloat(weighIns[weighIns.length - 1].weight_kg);
     document.getElementById('wc-current').textContent = currentWeight + ' kg';
 
     if (!target) {
       document.getElementById('wc-togo').textContent = '-';
-      document.getElementById('wc-bar').style.width = '0%';
+      renderPlates(0);
       return;
     }
 
-    const toGo = Math.max(0, currentWeight - target).toFixed(1);
-    document.getElementById('wc-togo').textContent = toGo + ' kg';
-
-    const totalDistance = startWeight - target;
-    const covered = startWeight - currentWeight;
-    let percent = totalDistance > 0 ? (covered / totalDistance) * 100 : 100;
-    percent = Math.max(0, Math.min(100, percent));
-    document.getElementById('wc-bar').style.width = percent + '%';
+    const toGo = Math.max(0, currentWeight - target);
+    document.getElementById('wc-togo').textContent = toGo.toFixed(1) + ' kg';
+    renderPlates(toGo);
   }
 
   // initial paint
