@@ -177,42 +177,62 @@
   }
   addSetRow(); // start with one row
 
-  function saveSession() {
+  const API_BASE = 'https://powerlifting-tracker-production-7a3c.up.railway.app';
+
+  async function saveSession() {
     const date = document.getElementById('log-date').value;
     const lift = document.getElementById('log-lift').value;
     if (!date) { alert('Pick a date first.'); return; }
 
     const rows = document.querySelectorAll('#sets-container .set-row');
     const sets = [];
-    rows.forEach(row => {
-      const weight = parseFloat(row.querySelector('.set-weight').value) || 0;
+    rows.forEach((row, i) => {
+      const weight_lb = parseFloat(row.querySelector('.set-weight').value) || 0;
       const reps = parseInt(row.querySelector('.set-reps').value) || 0;
       const rpe = parseFloat(row.querySelector('.set-rpe').value) || null;
-      if (weight > 0 && reps > 0) sets.push({ weight, reps, rpe });
+      if (weight_lb > 0 && reps > 0) sets.push({ set_number: i + 1, weight_lb, reps, rpe });
     });
     if (sets.length === 0) { alert('Add at least one set with weight and reps.'); return; }
 
-    const sessions = getSessions();
-    sessions.push({ date, lift, sets });
-    saveSessions(sessions);
+    try {
+      const res = await fetch(`${API_BASE}/api/sessions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_date: date, lift_type: lift, sets })
+      });
+      if (!res.ok) throw new Error('Server responded with an error');
 
-    // reset form
-    document.getElementById('sets-container').innerHTML = '';
-    setCount = 0;
-    addSetRow();
-    alert('Session saved.');
+      // reset form
+      document.getElementById('sets-container').innerHTML = '';
+      setCount = 0;
+      addSetRow();
+      alert('Session saved.');
+    } catch (err) {
+      console.error(err);
+      alert('Could not save session — is the server running?');
+    }
   }
 
   // ---- dashboard ----
   function getEstimatedMaxes() { return JSON.parse(localStorage.getItem('estimatedMaxes') || '{}'); }
   function saveEstimatedMaxes(m) { localStorage.setItem('estimatedMaxes', JSON.stringify(m)); }
 
-  function renderDashboard() {
-    const sessions = getSessions();
+  async function renderDashboard() {
+    let sessions = [];
+    try {
+      const res = await fetch(`${API_BASE}/api/sessions`);
+      sessions = await res.json();
+    } catch (err) {
+      console.error(err);
+      alert('Could not load dashboard data — is the server running?');
+      return;
+    }
+
     const maxByLift = {};
     sessions.forEach(s => {
       s.sets.forEach(set => {
-        if (!maxByLift[s.lift] || set.weight > maxByLift[s.lift]) maxByLift[s.lift] = set.weight;
+        const weight = parseFloat(set.weight_lb);
+        if (!maxByLift[s.lift_type] || weight > maxByLift[s.lift_type]) maxByLift[s.lift_type] = weight;
       });
     });
     const estimated = getEstimatedMaxes();
@@ -241,9 +261,11 @@
 
     const tbody = document.querySelector('#recent-table tbody');
     tbody.innerHTML = '';
-    sessions.slice(-5).reverse().forEach(s => {
+    // sessions come back newest-first from the API, so just take the first 5
+    sessions.slice(0, 5).forEach(s => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${s.date}</td><td>${s.lift}</td><td>${s.sets.length}</td>`;
+      const dateOnly = s.session_date.slice(0, 10);
+      tr.innerHTML = `<td>${dateOnly}</td><td>${s.lift_type}</td><td>${s.sets.length}</td>`;
       tbody.appendChild(tr);
     });
   }
@@ -267,19 +289,30 @@
   }
 
   // ---- history ----
-  function renderHistory() {
-    const sessions = getSessions();
+      async function renderHistory() {
+    let sessions = [];
+    try {
+      const res = await fetch(`${API_BASE}/api/sessions`);
+      sessions = await res.json();
+    } catch (err) {
+      console.error(err);
+      alert('Could not load history — is the server running?');
+      return;
+    }
+
     const tbody = document.querySelector('#history-table tbody');
     tbody.innerHTML = '';
-    sessions.slice().reverse().forEach(s => {
-      const top = s.sets.reduce((max, set) => set.weight > max.weight ? set : max, s.sets[0]);
+    sessions.forEach(s => {
+      const top = s.sets.reduce((max, set) => parseFloat(set.weight_lb) > parseFloat(max.weight_lb) ? set : max, s.sets[0]);
+      const dateOnly = s.session_date.slice(0, 10);
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${s.date}</td><td>${s.lift}</td><td>${s.sets.length}</td><td>${top.weight}x${top.reps}</td>`;
+      tr.innerHTML = `<td>${dateOnly}</td><td>${s.lift_type}</td><td>${s.sets.length}</td><td>${top.weight_lb}x${top.reps}</td>`;
       tbody.appendChild(tr);
     });
   }
 
-  // ---- weight class ----
+    // ---- weight class ----
+  // target class still stored locally for now (no dedicated API route for it)
   function getTargetClass() { return parseFloat(localStorage.getItem('targetClass')) || null; }
   function saveTargetClass() {
     const value = parseFloat(document.getElementById('target-class').value);
@@ -288,24 +321,44 @@
     renderWeight();
   }
 
-  function addWeighIn() {
+  async function addWeighIn() {
     const date = document.getElementById('weigh-date').value;
     const value = parseFloat(document.getElementById('weigh-value').value);
     if (!date || !value) { alert('Enter a date and weight.'); return; }
-    const weighIns = getWeighIns();
-    weighIns.push({ date, value });
-    saveWeighIns(weighIns);
-    document.getElementById('weigh-value').value = '';
-    renderWeight();
+
+    try {
+      const res = await fetch(`${API_BASE}/api/weigh-ins`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ weigh_date: date, weight_kg: value })
+      });
+      if (!res.ok) throw new Error('Server responded with an error');
+      document.getElementById('weigh-value').value = '';
+      renderWeight();
+    } catch (err) {
+      console.error(err);
+      alert('Could not save weigh-in — is the server running?');
+    }
   }
 
-  function renderWeight() {
-    const weighIns = getWeighIns();
+  async function renderWeight() {
+    let weighIns = [];
+    try {
+      const res = await fetch(`${API_BASE}/api/weigh-ins`);
+      weighIns = await res.json();
+    } catch (err) {
+      console.error(err);
+      alert('Could not load weight data — is the server running?');
+      return;
+    }
+
     const tbody = document.querySelector('#weight-table tbody');
     tbody.innerHTML = '';
+    // show newest first
     weighIns.slice().reverse().forEach(w => {
+      const dateOnly = w.weigh_date.slice(0, 10);
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${w.date}</td><td>${w.value}</td>`;
+      tr.innerHTML = `<td>${dateOnly}</td><td>${w.weight_kg}</td>`;
       tbody.appendChild(tr);
     });
 
@@ -320,10 +373,9 @@
       return;
     }
 
-    // sort by date to find the earliest (starting weight) and latest (current)
-    const sorted = weighIns.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
-    const startWeight = sorted[0].value;
-    const currentWeight = sorted[sorted.length - 1].value;
+    // API already returns oldest-first, so first = starting weight, last = current
+    const startWeight = parseFloat(weighIns[0].weight_kg);
+    const currentWeight = parseFloat(weighIns[weighIns.length - 1].weight_kg);
     document.getElementById('wc-current').textContent = currentWeight + ' kg';
 
     if (!target) {
@@ -335,7 +387,6 @@
     const toGo = Math.max(0, currentWeight - target).toFixed(1);
     document.getElementById('wc-togo').textContent = toGo + ' kg';
 
-    // progress: how much of the (startWeight -> target) distance has been covered
     const totalDistance = startWeight - target;
     const covered = startWeight - currentWeight;
     let percent = totalDistance > 0 ? (covered / totalDistance) * 100 : 100;
