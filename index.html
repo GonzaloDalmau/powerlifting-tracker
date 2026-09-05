@@ -36,8 +36,10 @@
   .sidebar-spacer { flex: 1; }
   .hero-total { position: relative; overflow: hidden; }
   .hero-total svg.watermark { position: absolute; right: -10px; bottom: -14px; opacity: 0.08; width: 160px; }
-  .media-card { background: var(--surface); border: 1px solid var(--border); padding: 0; margin-bottom: 20px; overflow: hidden; max-width: 260px; }
+  .media-card { background: var(--surface); border: 1px solid var(--border); padding: 0; margin-bottom: 20px; overflow: hidden; max-width: 260px; flex: 1; min-width: 200px; }
   .media-card video { display: block; width: 100%; height: auto; max-height: 460px; object-fit: contain; background: #000; }
+  .video-placeholder { display: flex; align-items: center; justify-content: center; height: 260px; background: var(--surface-2);
+    border-bottom: 1px dashed var(--border-strong); color: var(--text-muted); font-size: 13px; text-align: center; padding: 12px; }
   .media-caption { padding: 10px 14px; font-size: 12px; color: var(--text-secondary); letter-spacing: 0.03em; }
   .nav-btn { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-secondary);
              padding: 10px 12px; cursor: pointer; font-size: 14px; margin-bottom: 2px; border-left: 3px solid transparent;
@@ -161,11 +163,21 @@
       </div>
     </div>
 
-    <div class="media-card" id="clip-card">
-      <video id="deadlift-clip" autoplay loop muted playsinline controls>
-        <source src="deadlift.mp4" type="video/mp4">
-      </video>
-      <div class="media-caption">Form check — deadlift</div>
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:20px;">
+      <div class="media-card" style="margin-bottom:0;">
+        <div class="video-placeholder">Add squat.mp4</div>
+        <div class="media-caption">Form check — squat</div>
+      </div>
+      <div class="media-card" style="margin-bottom:0;">
+        <div class="video-placeholder">Add bench.mp4</div>
+        <div class="media-caption">Form check — bench</div>
+      </div>
+      <div class="media-card" id="clip-card" style="margin-bottom:0;">
+        <video id="deadlift-clip" autoplay loop muted playsinline controls>
+          <source src="deadlift.mp4" type="video/mp4">
+        </video>
+        <div class="media-caption">Form check — deadlift</div>
+      </div>
     </div>
 
     <div class="stats">
