@@ -76,7 +76,7 @@
 
   label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
   input, select { width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid var(--border); background: var(--surface-2);
-    color: var(--text); font-family: 'Inter', sans-serif; }
+    color: var(--text); font-family: 'Inter', sans-serif; font-size: 16px; }
   input::placeholder { color: var(--text-muted); }
   .set-row { display: grid; grid-template-columns: 24px 1fr 1fr 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }
   button { font-family: 'Inter', sans-serif; }
@@ -96,13 +96,38 @@
 
   @media (max-width: 768px) {
     body { flex-direction: column; }
-    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; padding: 16px; gap: 8px; }
-    .sidebar h1 { width: 100%; margin-bottom: 8px; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; padding: 14px; gap: 6px; }
+    .sidebar h1 { width: 100%; margin-bottom: 6px; }
     .sidebar-spacer { display: none; }
-    .nav-btn { width: auto; flex: 1; text-align: center; border-left: none; border-bottom: 3px solid transparent; }
+    .nav-btn { width: auto; flex: 1 1 40%; text-align: center; border-left: none; border-bottom: 3px solid transparent; font-size: 13px; padding: 8px 6px; }
     .nav-btn.active { border-left: none; border-bottom-color: var(--accent); }
-    .main { padding: 20px 15px; }
-    .stats { grid-template-columns: 1fr 1fr; }
+    .main { padding: 18px 14px; }
+
+    h2 { font-size: 19px; margin-bottom: 14px; }
+    .quote-bar { font-size: 13px; padding: 10px 12px; }
+
+    .hero-total { flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; }
+    .hero-total .display-num { font-size: 30px; }
+
+    /* video row: stack full-width instead of squeezing three side by side */
+    .main > div[style*="flex-wrap"] { flex-direction: column; }
+    .media-card { max-width: 100%; flex: 1 1 auto; }
+    .video-placeholder { height: 140px; }
+    .media-card video { max-height: 260px; }
+
+    .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat { padding: 10px; }
+    .stat .value { font-size: 18px; }
+
+    .card { padding: 14px; }
+
+    /* let wide tables scroll instead of squashing columns unreadably */
+    #history-table, #recent-table, #weight-table { display: block; }
+    .card:has(table) { overflow-x: auto; }
+    th, td { padding: 8px 5px; font-size: 12.5px; }
+
+    .set-row { grid-template-columns: 20px 1fr 1fr 1fr; gap: 5px; }
+    button.action, button.secondary { padding: 10px 14px; font-size: 14px; }
   }
 </style>
 </head>
