@@ -58,6 +58,56 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// ---- ACCOUNT SETTINGS ----
+
+app.post('/api/change-password', authenticateToken, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Current and new password are required' });
+  try {
+    const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+    const user = userResult.rows[0];
+    const validPassword = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!validPassword) return res.status(400).json({ error: 'Current password is incorrect' });
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+    await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newHash, req.user.id]);
+    res.json({ message: 'Password updated' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update password' });
+  }
+});
+
+app.delete('/api/account', authenticateToken, async (req, res) => {
+  const { password } = req.body;
+  if (!password) return res.status(400).json({ error: 'Password required to confirm account deletion' });
+  try {
+    const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+    const user = userResult.rows[0];
+    const validPassword = await bcrypt.compare(password, user.password_hash);
+    if (!validPassword) return res.status(400).json({ error: 'Incorrect password' });
+
+    await pool.query('DELETE FROM users WHERE id = $1', [req.user.id]);
+    res.json({ message: 'Account deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete account' });
+  }
+});
+
+// wipes all training data but keeps the account itself
+app.delete('/api/reset-data', authenticateToken, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM sessions WHERE user_id = $1', [req.user.id]);
+    await pool.query('DELETE FROM weigh_ins WHERE user_id = $1', [req.user.id]);
+    await pool.query('DELETE FROM blocks WHERE user_id = $1', [req.user.id]);
+    res.json({ message: 'All data cleared' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to reset data' });
+  }
+});
+
 // ---- SESSIONS ----
 
 app.get('/api/sessions', authenticateToken, async (req, res) => {
@@ -108,6 +158,21 @@ app.post('/api/sessions', authenticateToken, async (req, res) => {
   }
 });
 
+// delete a session (and its sets, via cascade) — only if it belongs to this user
+app.delete('/api/sessions/:id', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'DELETE FROM sessions WHERE id = $1 AND user_id = $2 RETURNING id',
+      [req.params.id, req.user.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Session not found' });
+    res.json({ message: 'Session deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete session' });
+  }
+});
+
 // ---- WEIGH-INS ----
 
 app.get('/api/weigh-ins', authenticateToken, async (req, res) => {
@@ -139,8 +204,6 @@ app.post('/api/weigh-ins', authenticateToken, async (req, res) => {
 });
 
 // ---- BLOCKS ----
-// "current" block is computed by the caller (frontend) from start/end dates —
-// this just returns every block the user has created.
 
 app.get('/api/blocks', authenticateToken, async (req, res) => {
   try {
@@ -170,8 +233,21 @@ app.post('/api/blocks', authenticateToken, async (req, res) => {
   }
 });
 
+app.delete('/api/blocks/:id', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'DELETE FROM blocks WHERE id = $1 AND user_id = $2 RETURNING id',
+      [req.params.id, req.user.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Block not found' });
+    res.json({ message: 'Block deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete block' });
+  }
+});
+
 // ---- ALL-TIME PRs ----
-// best (max weight) set ever logged, per lift, regardless of which block it fell in.
 
 app.get('/api/prs', authenticateToken, async (req, res) => {
   try {

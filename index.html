@@ -9,23 +9,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #15171b;
-    --surface: #1d2025;
-    --surface-2: #262a30;
-    --border: #383d44;
-    --border-strong: #4a5058;
-    --text: #ece9e2;
-    --text-secondary: #9aa0a8;
-    --text-muted: #6b7077;
-    --accent: #d6455a;
-    --accent-dim: #8a3340;
-    --gold: #c9a227;
-    --cut: #4c9a6a;
+    /* Deep Iron & Diamond Plate Base */
+    --bg: #080808; 
+    --surface: #171719; /* Cast iron grey */
+    --surface-2: #212124;
+    --border: #2a2a2d;
+    --border-strong: #3d3d42;
+    
+    /* Worn Chalk Text */
+    --text: #d8d8d4; 
+    --text-secondary: #8c8c91;
+    --text-muted: #57575b;
+    
+    /* Oxidized Rust & Brass */
+    --accent: #a34633; /* Rusted iron */
+    --accent-dim: #6b2b1f;
+    --gold: #a68b5a; /* Aged brass */
+    --cut: #547055; 
   }
+
   * { box-sizing: border-box; }
+
   body {
-    margin: 0; display: flex; min-height: 100vh;
-    background: var(--bg); color: var(--text);
+    margin: 0; 
+    display: flex; 
+    min-height: 100vh;
+    background-color: var(--bg);
+    
+    /* Heavy vignette shadow over an industrial diamond-plate pattern */
+    background-image: 
+      radial-gradient(circle at center, transparent 15%, #030303 120%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M15 5 L18 15 L15 25 L12 15 Z M45 35 L48 45 L45 55 L42 45 Z' fill='%23131315'/%3E%3C/svg%3E");
+    
+    color: var(--text);
     font-family: 'Inter', Arial, sans-serif;
   }
   h1, h2, h3, .display-num { font-family: 'Oswald', 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.03em; }
@@ -36,11 +52,6 @@
   .sidebar-spacer { flex: 1; }
   .hero-total { position: relative; overflow: hidden; }
   .hero-total svg.watermark { position: absolute; right: -10px; bottom: -14px; opacity: 0.08; width: 160px; }
-  .media-card { background: var(--surface); border: 1px solid var(--border); padding: 0; margin-bottom: 20px; overflow: hidden; max-width: 260px; flex: 1; min-width: 200px; }
-  .media-card video { display: block; width: 100%; height: auto; max-height: 460px; object-fit: contain; background: #000; }
-  .video-placeholder { display: flex; align-items: center; justify-content: center; height: 260px; background: var(--surface-2);
-    border-bottom: 1px dashed var(--border-strong); color: var(--text-muted); font-size: 13px; text-align: center; padding: 12px; }
-  .media-caption { padding: 10px 14px; font-size: 12px; color: var(--text-secondary); letter-spacing: 0.03em; }
   .nav-btn { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-secondary);
              padding: 10px 12px; cursor: pointer; font-size: 14px; margin-bottom: 2px; border-left: 3px solid transparent;
              font-family: 'Inter', sans-serif; }
@@ -120,11 +131,6 @@
     .hero-total { flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; }
     .hero-total .display-num { font-size: 30px; }
 
-    .main > div[style*="flex-wrap"] { flex-direction: column; }
-    .media-card { max-width: 100%; flex: 1 1 auto; }
-    .video-placeholder { height: 140px; }
-    .media-card video { max-height: 260px; }
-
     .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
     .stat { padding: 10px; }
     .stat .value { font-size: 18px; }
@@ -155,11 +161,12 @@
   </h1>
   <button class="nav-btn active" data-page="dashboard">Dashboard</button>
   <button class="nav-btn" data-page="log">Log session</button>
-  <button class="nav-btn" data-page="history">History</button>
-  <button class="nav-btn" data-page="weight">Weight class</button>
   <button class="nav-btn" data-page="blocks">Blocks</button>
+  <button class="nav-btn" data-page="weight">Weight class</button>
   <button class="nav-btn" data-page="calculator">1RM Calculator</button>
+  <button class="nav-btn" data-page="history">History</button>
   <div class="sidebar-spacer"></div>
+  <button class="nav-btn" data-page="settings">Settings</button>
   <button class="nav-btn" onclick="logoutUser()" style="color: var(--accent);">Log out</button>
 </div>
 
@@ -224,26 +231,6 @@
       </table>
     </div>
 
-    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:20px;">
-      <div class="media-card" style="margin-bottom:0;">
-        <video autoplay loop muted playsinline controls>
-          <source src="squat.mp4" type="video/mp4">
-        </video>
-        <div class="media-caption">Form check — squat</div>
-      </div>
-      <div class="media-card" style="margin-bottom:0;">
-        <video autoplay loop muted playsinline controls>
-          <source src="bench.mp4" type="video/mp4">
-        </video>
-        <div class="media-caption">Form check — bench</div>
-      </div>
-      <div class="media-card" id="clip-card" style="margin-bottom:0;">
-        <video id="deadlift-clip" autoplay loop muted playsinline controls>
-          <source src="deadlift.mp4" type="video/mp4">
-        </video>
-        <div class="media-caption">Form check — deadlift</div>
-      </div>
-    </div>
   </div>
 
   <div class="page" id="page-log">
@@ -274,7 +261,7 @@
     <h2>History</h2>
     <div class="card">
       <table id="history-table">
-        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set (lb)</th></tr></thead>
+        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -334,6 +321,20 @@
     </div>
   </div>
 
+  <div class="page" id="page-block-detail">
+    <button class="secondary" onclick="backToBlocks()" style="margin-bottom:16px;">&larr; Back to blocks</button>
+    <h2 id="bd-name">Block</h2>
+    <div class="block-dates" id="bd-dates" style="font-size:13px; margin-bottom:20px;"></div>
+    <div class="card">
+      <h3 style="margin-top:0;">Sessions in this block</h3>
+      <table id="bd-table">
+        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button class="secondary" style="border-color:var(--accent); color:var(--accent);" onclick="deleteCurrentBlock()">Delete this block</button>
+  </div>
+
   <div class="page" id="page-calculator">
     <h2>1-Rep Max Calculator</h2>
     <p style="font-size:13px; color:var(--text-secondary); margin-top:-12px;">A standalone estimate (Epley formula) — this never gets saved and never affects your dashboard numbers.</p>
@@ -354,12 +355,71 @@
     </div>
   </div>
 
+  <div class="page" id="page-settings">
+    <h2>Settings</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Account</h3>
+      <label>Current password</label>
+      <input type="password" id="pw-current" placeholder="••••••••">
+      <label>New password</label>
+      <input type="password" id="pw-new" placeholder="••••••••">
+      <button class="action" onclick="changePassword()">Update password</button>
+      <div id="pw-message" style="margin-top:10px; font-size:13px;"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Units &amp; display</h3>
+      <p style="font-size:12px; color:var(--text-secondary); margin-top:-8px; font-style:normal;">
+        Controls how lift weights are <em>displayed</em> across the dashboard, history, and PR table.
+        Log session / weigh-in forms still let you enter either unit per set.
+      </p>
+      <label>Preferred display unit for lift weights</label>
+      <select id="display-unit-select" onchange="saveDisplayUnit()">
+        <option value="lb">Pounds (lb)</option>
+        <option value="kg">Kilograms (kg)</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Your data</h3>
+      <p style="font-size:12px; color:var(--text-secondary); margin-top:-8px; font-style:normal;">Export everything you've logged as a CSV file you can keep, back up, or open in a spreadsheet.</p>
+      <button class="secondary" onclick="exportData()">Export all data (CSV)</button>
+    </div>
+
+    <div class="card" style="border-left: 3px solid var(--accent);">
+      <h3 style="margin-top:0; color: var(--accent);">Danger zone</h3>
+
+      <div style="margin-bottom:20px;">
+        <label>Reset all training data</label>
+        <p style="font-size:12px; color:var(--text-secondary); margin-top:-6px; font-style:normal;">Deletes every session, weigh-in, and block. Your login stays active.</p>
+        <button class="secondary" style="border-color: var(--accent); color: var(--accent);" onclick="resetAllData()">Reset all data</button>
+      </div>
+
+      <div>
+        <label>Delete account</label>
+        <p style="font-size:12px; color:var(--text-secondary); margin-top:-6px; font-style:normal;">Permanently deletes your account and everything in it. Enter your password to confirm.</p>
+        <input type="password" id="delete-account-password" placeholder="Confirm your password">
+        <button class="action" style="background: var(--accent);" onclick="deleteAccount()">Delete my account</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
   const API_BASE = 'https://powerlifting-tracker-production-7a3c.up.railway.app';
   const KG_PER_LB = 0.45359237;
   const LB_PER_KG = 2.2046226218;
+
+  // ---- display unit preference (affects display only — everything is still stored in lb) ----
+  function getDisplayUnit() { return localStorage.getItem('displayUnit') || 'lb'; }
+  function setDisplayUnit(unit) { localStorage.setItem('displayUnit', unit); }
+  function formatLb(weightLb) {
+    const w = parseFloat(weightLb);
+    if (getDisplayUnit() === 'kg') return (Math.round(w * KG_PER_LB * 10) / 10) + ' kg';
+    return w + ' lb';
+  }
 
   // ---- auth helpers ----
   function getToken() { return localStorage.getItem('token'); }
@@ -461,6 +521,7 @@
       if (btn.dataset.page === 'history') renderHistory();
       if (btn.dataset.page === 'weight') renderWeight();
       if (btn.dataset.page === 'blocks') renderBlocks();
+      if (btn.dataset.page === 'settings') renderSettings();
     });
   });
 
@@ -589,7 +650,7 @@
       if (existingChip) existingChip.remove();
 
       if (maxByLift[lift]) {
-        el.textContent = maxByLift[lift] + ' lb';
+        el.textContent = formatLb(maxByLift[lift]);
         total += maxByLift[lift];
         // an all-time PR shows regardless of which block you're viewing
         if (prByLift[lift] && maxByLift[lift] >= prByLift[lift]) {
@@ -603,7 +664,7 @@
         el.textContent = '-';
       }
     });
-    document.getElementById('hero-total').innerHTML = (total > 0 ? total : '-') + ' <small>lb</small>';
+    document.getElementById('hero-total').innerHTML = (total > 0 ? formatLb(total) : '-');
     document.getElementById('session-count').textContent = scopedSessions.length;
 
     const tbody = document.querySelector('#recent-table tbody');
@@ -620,7 +681,7 @@
     prs.forEach(p => {
       const tr = document.createElement('tr');
       const dateOnly = p.session_date.slice(0, 10);
-      tr.innerHTML = `<td>${p.lift_type}</td><td>${p.weight_lb} lb x ${p.reps}</td><td>${dateOnly}</td>`;
+      tr.innerHTML = `<td>${p.lift_type}</td><td>${formatLb(p.weight_lb)} x ${p.reps}</td><td>${dateOnly}</td>`;
       prTbody.appendChild(tr);
     });
   }
@@ -644,9 +705,26 @@
       const top = s.sets.reduce((max, set) => parseFloat(set.weight_lb) > parseFloat(max.weight_lb) ? set : max, s.sets[0]);
       const dateOnly = s.session_date.slice(0, 10);
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${dateOnly}</td><td>${s.lift_type}</td><td>${s.sets.length}</td><td>${top.weight_lb}x${top.reps}</td>`;
+      tr.innerHTML = `<td>${dateOnly}</td><td>${s.lift_type}</td><td>${s.sets.length}</td><td>${formatLb(top.weight_lb)} x ${top.reps}</td>
+        <td><button class="secondary" style="padding:4px 10px; font-size:12px; border-color:var(--accent); color:var(--accent);" onclick="deleteSession(${s.id})">Delete</button></td>`;
       tbody.appendChild(tr);
     });
+  }
+
+  async function deleteSession(id) {
+    if (!confirm('Delete this session? This cannot be undone.')) return;
+    try {
+      const res = await fetch(`${API_BASE}/api/sessions/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      if (handleAuthFailure(res.status)) return;
+      if (!res.ok) throw new Error('Failed to delete');
+      renderHistory();
+    } catch (err) {
+      console.error(err);
+      alert('Could not delete session.');
+    }
   }
 
   // ---- weight class ----
@@ -777,11 +855,16 @@
   }
 
   async function renderBlocks() {
-    let blocks = [];
+    let blocks = [], sessions = [];
     try {
-      const res = await fetch(`${API_BASE}/api/blocks`, { headers: authHeaders() });
-      if (handleAuthFailure(res.status)) return;
-      blocks = await res.json();
+      const [blocksRes, sessionsRes] = await Promise.all([
+        fetch(`${API_BASE}/api/blocks`, { headers: authHeaders() }),
+        fetch(`${API_BASE}/api/sessions`, { headers: authHeaders() })
+      ]);
+      if (handleAuthFailure(blocksRes.status)) return;
+      if (handleAuthFailure(sessionsRes.status)) return;
+      blocks = await blocksRes.json();
+      sessions = await sessionsRes.json();
     } catch (err) {
       console.error(err);
       document.getElementById('blocks-list').textContent = 'Could not load blocks.';
@@ -796,18 +879,225 @@
     }
     list.innerHTML = '';
     blocks.forEach(b => {
-      const row = document.createElement('div');
-      row.className = 'block-row';
+      const start = b.start_date.slice(0, 10);
+      const end = b.end_date ? b.end_date.slice(0, 10) : null;
+      const blockSessions = sessions.filter(s => {
+        const d = s.session_date.slice(0, 10);
+        return d >= start && (!end || d <= end);
+      });
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'block-row';
+      wrapper.style.cursor = 'pointer';
+
       const isCurrent = current && current.id === b.id;
-      const endLabel = b.end_date ? b.end_date.slice(0, 10) : 'ongoing';
-      row.innerHTML = `
+      const endLabel = end || 'ongoing';
+
+      wrapper.innerHTML = `
         <div>
           <span class="block-name">${b.name}</span>${isCurrent ? '<span class="current-tag">CURRENT</span>' : ''}
-          <div class="block-dates">${b.start_date.slice(0, 10)} → ${endLabel}</div>
+          <div class="block-dates">${start} → ${endLabel} · ${blockSessions.length} session${blockSessions.length === 1 ? '' : 's'}</div>
         </div>
+        <span style="color:var(--text-muted); font-size:12px;">view &rarr;</span>
       `;
-      list.appendChild(row);
+
+      wrapper.addEventListener('click', () => openBlockDetail(b, blockSessions, isCurrent));
+      list.appendChild(wrapper);
     });
+  }
+
+  let currentBlockDetailId = null;
+  function openBlockDetail(block, blockSessions, isCurrent) {
+    currentBlockDetailId = block.id;
+    const start = block.start_date.slice(0, 10);
+    const end = block.end_date ? block.end_date.slice(0, 10) : 'ongoing';
+    document.getElementById('bd-name').textContent = block.name + (isCurrent ? ' — current block' : '');
+    document.getElementById('bd-dates').textContent = `${start} → ${end} · ${blockSessions.length} session${blockSessions.length === 1 ? '' : 's'}`;
+
+    const tbody = document.querySelector('#bd-table tbody');
+    tbody.innerHTML = '';
+    if (blockSessions.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);">No sessions logged in this block yet.</td></tr>';
+    } else {
+      blockSessions.forEach(s => {
+        const top = s.sets.reduce((max, set) => parseFloat(set.weight_lb) > parseFloat(max.weight_lb) ? set : max, s.sets[0]);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${s.session_date.slice(0, 10)}</td><td>${s.lift_type}</td><td>${s.sets.length}</td><td>${formatLb(top.weight_lb)} x ${top.reps}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-block-detail').classList.add('active');
+  }
+
+  function backToBlocks() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-blocks').classList.add('active');
+  }
+
+  async function deleteCurrentBlock() {
+    if (!currentBlockDetailId) return;
+    if (!confirm('Delete this block? Its sessions stay in your History, only the block itself goes away.')) return;
+    try {
+      const res = await fetch(`${API_BASE}/api/blocks/${currentBlockDetailId}`, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      if (handleAuthFailure(res.status)) return;
+      if (!res.ok) throw new Error('Failed to delete');
+      backToBlocks();
+      renderBlocks();
+    } catch (err) {
+      console.error(err);
+      alert('Could not delete block.');
+    }
+  }
+
+  // ---- settings ----
+  function renderSettings() {
+    document.getElementById('display-unit-select').value = getDisplayUnit();
+  }
+
+  function saveDisplayUnit() {
+    const unit = document.getElementById('display-unit-select').value;
+    setDisplayUnit(unit);
+  }
+
+  async function changePassword() {
+    const currentPassword = document.getElementById('pw-current').value;
+    const newPassword = document.getElementById('pw-new').value;
+    const msgEl = document.getElementById('pw-message');
+    if (!currentPassword || !newPassword) { msgEl.style.color = 'var(--accent)'; msgEl.textContent = 'Fill in both fields.'; return; }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/change-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      if (handleAuthFailure(res.status)) return;
+      const data = await res.json();
+      if (res.ok) {
+        msgEl.style.color = 'var(--cut)';
+        msgEl.textContent = 'Password updated.';
+        document.getElementById('pw-current').value = '';
+        document.getElementById('pw-new').value = '';
+      } else {
+        msgEl.style.color = 'var(--accent)';
+        msgEl.textContent = data.error || 'Could not update password.';
+      }
+    } catch (err) {
+      console.error(err);
+      msgEl.style.color = 'var(--accent)';
+      msgEl.textContent = 'Server error. Is the backend running?';
+    }
+  }
+
+  function csvEscape(value) {
+    const str = String(value === null || value === undefined ? '' : value);
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
+  async function exportData() {
+    try {
+      const [sessionsRes, weighInsRes, blocksRes, prsRes] = await Promise.all([
+        fetch(`${API_BASE}/api/sessions`, { headers: authHeaders() }),
+        fetch(`${API_BASE}/api/weigh-ins`, { headers: authHeaders() }),
+        fetch(`${API_BASE}/api/blocks`, { headers: authHeaders() }),
+        fetch(`${API_BASE}/api/prs`, { headers: authHeaders() })
+      ]);
+      if (handleAuthFailure(sessionsRes.status)) return;
+      const sessions = await sessionsRes.json();
+      const weighIns = await weighInsRes.json();
+      const blocks = await blocksRes.json();
+      const prs = await prsRes.json();
+
+      let csv = 'SESSIONS\n';
+      csv += 'date,lift,set_number,weight_lb,reps,rpe\n';
+      sessions.forEach(s => {
+        s.sets.forEach(set => {
+          csv += [s.session_date.slice(0, 10), s.lift_type, set.set_number, set.weight_lb, set.reps, set.rpe ?? '']
+            .map(csvEscape).join(',') + '\n';
+        });
+      });
+
+      csv += '\nWEIGH-INS\n';
+      csv += 'date,weight_kg\n';
+      weighIns.forEach(w => {
+        csv += [w.weigh_date.slice(0, 10), w.weight_kg].map(csvEscape).join(',') + '\n';
+      });
+
+      csv += '\nBLOCKS\n';
+      csv += 'name,start_date,end_date\n';
+      blocks.forEach(b => {
+        csv += [b.name, b.start_date.slice(0, 10), b.end_date ? b.end_date.slice(0, 10) : ''].map(csvEscape).join(',') + '\n';
+      });
+
+      csv += '\nALL-TIME PRS\n';
+      csv += 'lift,weight_lb,reps,date\n';
+      prs.forEach(p => {
+        csv += [p.lift_type, p.weight_lb, p.reps, p.session_date.slice(0, 10)].map(csvEscape).join(',') + '\n';
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lift-log-export-${todayStr()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert('Could not export data — is the server running?');
+    }
+  }
+
+  async function resetAllData() {
+    if (!confirm('This deletes every session, weigh-in, and block you have. Your login stays active. This cannot be undone. Continue?')) return;
+    try {
+      const res = await fetch(`${API_BASE}/api/reset-data`, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      if (handleAuthFailure(res.status)) return;
+      if (!res.ok) throw new Error('Failed to reset');
+      alert('All data cleared.');
+      renderDashboard();
+    } catch (err) {
+      console.error(err);
+      alert('Could not reset data.');
+    }
+  }
+
+  async function deleteAccount() {
+    const password = document.getElementById('delete-account-password').value;
+    if (!password) { alert('Enter your password to confirm.'); return; }
+    if (!confirm('This permanently deletes your account and everything in it. This cannot be undone. Continue?')) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/account`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ password })
+      });
+      if (handleAuthFailure(res.status)) return;
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.removeItem('token');
+        showAuthPage();
+      } else {
+        alert(data.error || 'Could not delete account.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Server error. Is the backend running?');
+    }
   }
 
   // ---- standalone 1RM calculator (does not save anything) ----
