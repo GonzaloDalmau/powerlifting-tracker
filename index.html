@@ -9,39 +9,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* Deep Iron & Diamond Plate Base */
-    --bg: #080808; 
-    --surface: #171719; /* Cast iron grey */
-    --surface-2: #212124;
-    --border: #2a2a2d;
-    --border-strong: #3d3d42;
-    
-    /* Worn Chalk Text */
-    --text: #d8d8d4; 
-    --text-secondary: #8c8c91;
-    --text-muted: #57575b;
-    
-    /* Oxidized Rust & Brass */
-    --accent: #a34633; /* Rusted iron */
-    --accent-dim: #6b2b1f;
-    --gold: #a68b5a; /* Aged brass */
-    --cut: #547055; 
+    --bg: #15171b;
+    --surface: #1d2025;
+    --surface-2: #262a30;
+    --border: #383d44;
+    --border-strong: #4a5058;
+    --text: #ece9e2;
+    --text-secondary: #9aa0a8;
+    --text-muted: #6b7077;
+    --accent: #d6455a;
+    --accent-dim: #8a3340;
+    --gold: #c9a227;
+    --cut: #4c9a6a;
   }
-
   * { box-sizing: border-box; }
-
   body {
-    margin: 0; 
-    display: flex; 
-    min-height: 100vh;
-    background-color: var(--bg);
-    
-    /* Heavy vignette shadow over an industrial diamond-plate pattern */
-    background-image: 
-      radial-gradient(circle at center, transparent 15%, #030303 120%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M15 5 L18 15 L15 25 L12 15 Z M45 35 L48 45 L45 55 L42 45 Z' fill='%23131315'/%3E%3C/svg%3E");
-    
-    color: var(--text);
+    margin: 0; display: flex; min-height: 100vh;
+    background: var(--bg); color: var(--text);
     font-family: 'Inter', Arial, sans-serif;
   }
   h1, h2, h3, .display-num { font-family: 'Oswald', 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.03em; }
@@ -52,6 +36,11 @@
   .sidebar-spacer { flex: 1; }
   .hero-total { position: relative; overflow: hidden; }
   .hero-total svg.watermark { position: absolute; right: -10px; bottom: -14px; opacity: 0.08; width: 160px; }
+  .media-card { background: var(--surface); border: 1px solid var(--border); padding: 0; margin-bottom: 20px; overflow: hidden; max-width: 260px; flex: 1; min-width: 200px; }
+  .media-card video { display: block; width: 100%; height: auto; max-height: 460px; object-fit: contain; background: #000; }
+  .video-placeholder { display: flex; align-items: center; justify-content: center; height: 260px; background: var(--surface-2);
+    border-bottom: 1px dashed var(--border-strong); color: var(--text-muted); font-size: 13px; text-align: center; padding: 12px; }
+  .media-caption { padding: 10px 14px; font-size: 12px; color: var(--text-secondary); letter-spacing: 0.03em; }
   .nav-btn { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-secondary);
              padding: 10px 12px; cursor: pointer; font-size: 14px; margin-bottom: 2px; border-left: 3px solid transparent;
              font-family: 'Inter', sans-serif; }
@@ -70,13 +59,11 @@
   }
   .quote-bar span.mark { color: var(--gold); font-style: normal; font-weight: 600; margin-right: 6px; }
 
-  .hero-total { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; margin-bottom: 6px;
+  .hero-total { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; margin-bottom: 20px;
     display: flex; align-items: baseline; justify-content: space-between; }
   .hero-total .label { font-size: 13px; color: var(--text-secondary); letter-spacing: 0.08em; }
   .hero-total .display-num { font-size: 40px; color: var(--text); font-weight: 700; }
   .hero-total .display-num small { font-size: 16px; color: var(--text-secondary); font-weight: 500; text-transform: none; letter-spacing: 0; }
-  .block-note { font-size: 12px; color: var(--text-muted); margin: 0 0 20px; }
-  .block-note a { color: var(--gold); cursor: pointer; text-decoration: underline; }
 
   .card { background: var(--surface); padding: 18px; border: 1px solid var(--border); margin-bottom: 20px; }
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
@@ -89,7 +76,7 @@
 
   label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
   input, select { width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid var(--border); background: var(--surface-2);
-    color: var(--text); font-family: 'Inter', sans-serif; font-size: 16px; }
+    color: var(--text); font-family: 'Inter', sans-serif; }
   input::placeholder { color: var(--text-muted); }
   .set-row { display: grid; grid-template-columns: 24px 1fr 1fr 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }
   button { font-family: 'Inter', sans-serif; }
@@ -107,42 +94,15 @@
   .plate.remaining { background: transparent; border: 2px solid var(--border-strong); }
   .plates-more { align-self: center; font-size: 12px; color: var(--text-secondary); margin-left: 4px; }
 
-  .block-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
-  .block-row:last-child { border-bottom: none; }
-  .block-row .block-name { font-weight: 600; }
-  .block-row .block-dates { font-size: 12px; color: var(--text-secondary); }
-  .current-tag { background: var(--gold); color: #1a1a1a; font-size: 10px; font-weight: 700; padding: 2px 8px; letter-spacing: 0.05em; margin-left: 8px; }
-
-  .unit-row { display: flex; gap: 8px; align-items: flex-end; }
-  .unit-row select { max-width: 90px; }
-
   @media (max-width: 768px) {
     body { flex-direction: column; }
-    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; padding: 14px; gap: 6px; }
-    .sidebar h1 { width: 100%; margin-bottom: 6px; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; padding: 16px; gap: 8px; }
+    .sidebar h1 { width: 100%; margin-bottom: 8px; }
     .sidebar-spacer { display: none; }
-    .nav-btn { width: auto; flex: 1 1 40%; text-align: center; border-left: none; border-bottom: 3px solid transparent; font-size: 13px; padding: 8px 6px; }
+    .nav-btn { width: auto; flex: 1; text-align: center; border-left: none; border-bottom: 3px solid transparent; }
     .nav-btn.active { border-left: none; border-bottom-color: var(--accent); }
-    .main { padding: 18px 14px; }
-
-    h2 { font-size: 19px; margin-bottom: 14px; }
-    .quote-bar { font-size: 13px; padding: 10px 12px; }
-
-    .hero-total { flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; }
-    .hero-total .display-num { font-size: 30px; }
-
-    .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .stat { padding: 10px; }
-    .stat .value { font-size: 18px; }
-
-    .card { padding: 14px; }
-
-    #history-table, #recent-table, #weight-table, #pr-table { display: block; }
-    .card:has(table) { overflow-x: auto; }
-    th, td { padding: 8px 5px; font-size: 12.5px; }
-
-    .set-row { grid-template-columns: 20px 1fr 1fr 1fr; gap: 5px; }
-    button.action, button.secondary { padding: 10px 14px; font-size: 14px; }
+    .main { padding: 20px 15px; }
+    .stats { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -161,12 +121,9 @@
   </h1>
   <button class="nav-btn active" data-page="dashboard">Dashboard</button>
   <button class="nav-btn" data-page="log">Log session</button>
-  <button class="nav-btn" data-page="blocks">Blocks</button>
-  <button class="nav-btn" data-page="weight">Weight class</button>
-  <button class="nav-btn" data-page="calculator">1RM Calculator</button>
   <button class="nav-btn" data-page="history">History</button>
+  <button class="nav-btn" data-page="weight">Weight class</button>
   <div class="sidebar-spacer"></div>
-  <button class="nav-btn" data-page="settings">Settings</button>
   <button class="nav-btn" onclick="logoutUser()" style="color: var(--accent);">Log out</button>
 </div>
 
@@ -201,19 +158,45 @@
         <rect x="40" y="9" width="4" height="6" fill="currentColor"/>
       </svg>
       <div>
-        <div class="label" id="hero-label">Projected total</div>
+        <div class="label">Estimated total</div>
         <div class="display-num" id="hero-total">- <small>lb</small></div>
       </div>
     </div>
-    <div class="block-note" id="block-note"></div>
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:20px;">
+      <div class="media-card" style="margin-bottom:0;">
+        <div class="video-placeholder">Add squat.mp4</div>
+        <div class="media-caption">Form check — squat</div>
+      </div>
+      <div class="media-card" style="margin-bottom:0;">
+        <div class="video-placeholder">Add bench.mp4</div>
+        <div class="media-caption">Form check — bench</div>
+      </div>
+      <div class="media-card" id="clip-card" style="margin-bottom:0;">
+        <video id="deadlift-clip" autoplay loop muted playsinline controls>
+          <source src="deadlift.mp4" type="video/mp4">
+        </video>
+        <div class="media-caption">Form check — deadlift</div>
+      </div>
+    </div>
 
     <div class="stats">
       <div class="stat" id="stat-squat"><div class="label">Squat max</div><div class="value" id="max-squat">-</div></div>
       <div class="stat" id="stat-bench"><div class="label">Bench max</div><div class="value" id="max-bench">-</div></div>
       <div class="stat" id="stat-deadlift"><div class="label">Deadlift max</div><div class="value" id="max-deadlift">-</div></div>
-      <div class="stat"><div class="label">Sessions this block</div><div class="value" id="session-count">0</div></div>
+      <div class="stat"><div class="label">Sessions logged</div><div class="value" id="session-count">0</div></div>
     </div>
-
+    <div class="card" id="estimator-card" style="margin-bottom:20px; display:none;">
+      <h3 style="margin-top:0;">Estimate your 1-rep max</h3>
+      <p style="font-size:13px; color:var(--text-secondary); margin-top:-8px; font-style:normal;">No recorded max yet for one or more lifts? Enter any set you've done and get an estimate (Epley formula).</p>
+      <div style="display:flex; gap:8px; align-items:flex-end;">
+        <div style="flex:1;"><label>Lift</label><select id="est-lift"></select></div>
+        <div style="flex:1;"><label>Weight (lb)</label><input type="number" id="est-weight"></div>
+        <div style="flex:1;"><label>Reps</label><input type="number" id="est-reps"></div>
+        <button class="action" onclick="estimateMax()" style="margin-bottom:12px;">Estimate</button>
+      </div>
+      <div id="est-result" style="font-size:14px; margin-top:4px; color: var(--gold);"></div>
+    </div>
     <div class="card">
       <h3 style="margin-top:0;">Recent sessions</h3>
       <table id="recent-table">
@@ -221,16 +204,6 @@
         <tbody></tbody>
       </table>
     </div>
-
-    <div class="card">
-      <h3 style="margin-top:0;">All-time PRs</h3>
-      <p style="font-size:12px; color:var(--text-secondary); margin-top:-8px; font-style:normal;">Your best set ever logged for each lift, no matter which block it happened in.</p>
-      <table id="pr-table">
-        <thead><tr><th>Lift</th><th>Best set</th><th>Date</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
   </div>
 
   <div class="page" id="page-log">
@@ -245,11 +218,6 @@
         <option>deadlift</option>
         <option>accessory</option>
       </select>
-      <label>Unit for this session's weights</label>
-      <select id="log-unit">
-        <option value="lb">lb</option>
-        <option value="kg">kg</option>
-      </select>
       <div id="sets-container"></div>
       <button class="secondary" onclick="addSetRow()">+ add set</button>
       <br><br>
@@ -261,7 +229,7 @@
     <h2>History</h2>
     <div class="card">
       <table id="history-table">
-        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th><th></th></tr></thead>
+        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -282,20 +250,17 @@
         <div class="stat"><div class="label">To go</div><div class="value" id="wc-togo">-</div></div>
       </div>
       <div class="plates-row" id="wc-plates"></div>
-      <div style="font-size:11px; color:var(--text-muted);">each plate = 5kg toward your target</div>
+      <div id="wc-plates-note" style="font-size:11px; color:var(--text-muted);">each plate = 5kg toward your target</div>
     </div>
 
     <div class="card">
-      <label>Log a weigh-in</label>
-      <div class="unit-row">
+      <label>Log a weigh-in (kg)</label>
+      <div style="display:flex; gap:8px;">
         <input type="date" id="weigh-date">
         <input type="number" id="weigh-value" placeholder="e.g. 117.4">
-        <select id="weigh-unit">
-          <option value="kg">kg</option>
-          <option value="lb">lb</option>
-        </select>
         <button class="action" onclick="addWeighIn()">Add</button>
       </div>
+      <br>
       <table id="weight-table">
         <thead><tr><th>Date</th><th>Weight (kg)</th></tr></thead>
         <tbody></tbody>
@@ -303,123 +268,10 @@
     </div>
   </div>
 
-  <div class="page" id="page-blocks">
-    <h2>Training blocks</h2>
-    <div class="card" style="margin-bottom:20px;">
-      <h3 style="margin-top:0;">New block</h3>
-      <label>Name</label>
-      <input type="text" id="block-name" placeholder="e.g. Meet prep — Sept">
-      <label>Start date</label>
-      <input type="date" id="block-start">
-      <label>End date (leave blank if ongoing)</label>
-      <input type="date" id="block-end">
-      <button class="action" onclick="createBlock()">Create block</button>
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">Your blocks</h3>
-      <div id="blocks-list" style="font-size:14px; color:var(--text-secondary);">Loading…</div>
-    </div>
-  </div>
-
-  <div class="page" id="page-block-detail">
-    <button class="secondary" onclick="backToBlocks()" style="margin-bottom:16px;">&larr; Back to blocks</button>
-    <h2 id="bd-name">Block</h2>
-    <div class="block-dates" id="bd-dates" style="font-size:13px; margin-bottom:20px;"></div>
-    <div class="card">
-      <h3 style="margin-top:0;">Sessions in this block</h3>
-      <table id="bd-table">
-        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <button class="secondary" style="border-color:var(--accent); color:var(--accent);" onclick="deleteCurrentBlock()">Delete this block</button>
-  </div>
-
-  <div class="page" id="page-calculator">
-    <h2>1-Rep Max Calculator</h2>
-    <p style="font-size:13px; color:var(--text-secondary); margin-top:-12px;">A standalone estimate (Epley formula) — this never gets saved and never affects your dashboard numbers.</p>
-    <div class="card" style="max-width: 420px;">
-      <div class="unit-row">
-        <div style="flex:1;"><label>Weight lifted</label><input type="number" id="calc-weight"></div>
-        <div><label>Unit</label>
-          <select id="calc-unit">
-            <option value="lb">lb</option>
-            <option value="kg">kg</option>
-          </select>
-        </div>
-      </div>
-      <label>Reps performed</label>
-      <input type="number" id="calc-reps">
-      <button class="action" onclick="calcOneRepMax()">Calculate</button>
-      <div id="calc-result" style="margin-top:14px; font-size:16px; color: var(--gold); font-weight:600;"></div>
-    </div>
-  </div>
-
-  <div class="page" id="page-settings">
-    <h2>Settings</h2>
-
-    <div class="card">
-      <h3 style="margin-top:0;">Account</h3>
-      <label>Current password</label>
-      <input type="password" id="pw-current" placeholder="••••••••">
-      <label>New password</label>
-      <input type="password" id="pw-new" placeholder="••••••••">
-      <button class="action" onclick="changePassword()">Update password</button>
-      <div id="pw-message" style="margin-top:10px; font-size:13px;"></div>
-    </div>
-
-    <div class="card">
-      <h3 style="margin-top:0;">Units &amp; display</h3>
-      <p style="font-size:12px; color:var(--text-secondary); margin-top:-8px; font-style:normal;">
-        Controls how lift weights are <em>displayed</em> across the dashboard, history, and PR table.
-        Log session / weigh-in forms still let you enter either unit per set.
-      </p>
-      <label>Preferred display unit for lift weights</label>
-      <select id="display-unit-select" onchange="saveDisplayUnit()">
-        <option value="lb">Pounds (lb)</option>
-        <option value="kg">Kilograms (kg)</option>
-      </select>
-    </div>
-
-    <div class="card">
-      <h3 style="margin-top:0;">Your data</h3>
-      <p style="font-size:12px; color:var(--text-secondary); margin-top:-8px; font-style:normal;">Export everything you've logged as a CSV file you can keep, back up, or open in a spreadsheet.</p>
-      <button class="secondary" onclick="exportData()">Export all data (CSV)</button>
-    </div>
-
-    <div class="card" style="border-left: 3px solid var(--accent);">
-      <h3 style="margin-top:0; color: var(--accent);">Danger zone</h3>
-
-      <div style="margin-bottom:20px;">
-        <label>Reset all training data</label>
-        <p style="font-size:12px; color:var(--text-secondary); margin-top:-6px; font-style:normal;">Deletes every session, weigh-in, and block. Your login stays active.</p>
-        <button class="secondary" style="border-color: var(--accent); color: var(--accent);" onclick="resetAllData()">Reset all data</button>
-      </div>
-
-      <div>
-        <label>Delete account</label>
-        <p style="font-size:12px; color:var(--text-secondary); margin-top:-6px; font-style:normal;">Permanently deletes your account and everything in it. Enter your password to confirm.</p>
-        <input type="password" id="delete-account-password" placeholder="Confirm your password">
-        <button class="action" style="background: var(--accent);" onclick="deleteAccount()">Delete my account</button>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <script>
   const API_BASE = 'https://powerlifting-tracker-production-7a3c.up.railway.app';
-  const KG_PER_LB = 0.45359237;
-  const LB_PER_KG = 2.2046226218;
-
-  // ---- display unit preference (affects display only — everything is still stored in lb) ----
-  function getDisplayUnit() { return localStorage.getItem('displayUnit') || 'lb'; }
-  function setDisplayUnit(unit) { localStorage.setItem('displayUnit', unit); }
-  function formatLb(weightLb) {
-    const w = parseFloat(weightLb);
-    if (getDisplayUnit() === 'kg') return (Math.round(w * KG_PER_LB * 10) / 10) + ' kg';
-    return w + ' lb';
-  }
 
   // ---- auth helpers ----
   function getToken() { return localStorage.getItem('token'); }
@@ -434,7 +286,7 @@
   function showApp() {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-dashboard').classList.add('active');
-    document.querySelectorAll('.nav-btn[data-page]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.querySelector('.nav-btn[data-page="dashboard"]').classList.add('active');
     renderDashboard();
   }
@@ -442,6 +294,7 @@
     localStorage.removeItem('token');
     showAuthPage();
   }
+  // if a protected request comes back unauthorized, bounce to login
   function handleAuthFailure(status) {
     if (status === 401 || status === 403) {
       localStorage.removeItem('token');
@@ -520,8 +373,6 @@
       if (btn.dataset.page === 'dashboard') renderDashboard();
       if (btn.dataset.page === 'history') renderHistory();
       if (btn.dataset.page === 'weight') renderWeight();
-      if (btn.dataset.page === 'blocks') renderBlocks();
-      if (btn.dataset.page === 'settings') renderSettings();
     });
   });
 
@@ -534,7 +385,7 @@
     row.className = 'set-row';
     row.innerHTML = `
       <span>${setCount}</span>
-      <input type="number" placeholder="weight" class="set-weight">
+      <input type="number" placeholder="weight (lb)" class="set-weight">
       <input type="number" placeholder="reps" class="set-reps">
       <input type="number" placeholder="RPE" class="set-rpe">
     `;
@@ -545,16 +396,14 @@
   async function saveSession() {
     const date = document.getElementById('log-date').value;
     const lift = document.getElementById('log-lift').value;
-    const unit = document.getElementById('log-unit').value;
     if (!date) { alert('Pick a date first.'); return; }
 
     const rows = document.querySelectorAll('#sets-container .set-row');
     const sets = [];
     rows.forEach((row, i) => {
-      let weight_lb = parseFloat(row.querySelector('.set-weight').value) || 0;
+      const weight_lb = parseFloat(row.querySelector('.set-weight').value) || 0;
       const reps = parseInt(row.querySelector('.set-reps').value) || 0;
       const rpe = parseFloat(row.querySelector('.set-rpe').value) || null;
-      if (unit === 'kg' && weight_lb > 0) weight_lb = Math.round(weight_lb * LB_PER_KG * 10) / 10;
       if (weight_lb > 0 && reps > 0) sets.push({ set_number: i + 1, weight_lb, reps, rpe });
     });
     if (sets.length === 0) { alert('Add at least one set with weight and reps.'); return; }
@@ -571,77 +420,45 @@
       document.getElementById('sets-container').innerHTML = '';
       setCount = 0;
       addSetRow();
-      alert('Session saved (weights stored in lb).');
+      alert('Session saved.');
     } catch (err) {
       console.error(err);
       alert('Could not save session — is the server running?');
     }
   }
 
-  // ---- blocks helpers (shared by dashboard + blocks page) ----
-  function todayStr() { return new Date().toISOString().slice(0, 10); }
-  function getCurrentBlock(blocks) {
-    const today = todayStr();
-    const active = blocks.filter(b => {
-      const start = b.start_date.slice(0, 10);
-      const end = b.end_date ? b.end_date.slice(0, 10) : null;
-      return start <= today && (!end || end >= today);
-    });
-    if (active.length === 0) return null;
-    active.sort((a, b) => b.start_date.localeCompare(a.start_date));
-    return active[0];
-  }
-
   // ---- dashboard ----
+  function getEstimatedMaxes() { return JSON.parse(localStorage.getItem('estimatedMaxes') || '{}'); }
+  function saveEstimatedMaxes(m) { localStorage.setItem('estimatedMaxes', JSON.stringify(m)); }
+  function getKnownPRs() { return JSON.parse(localStorage.getItem('knownPRs') || '{}'); }
+  function saveKnownPRs(p) { localStorage.setItem('knownPRs', JSON.stringify(p)); }
+
   async function renderDashboard() {
-    let sessions = [], blocks = [], prs = [];
+    let sessions = [];
     try {
-      const [sessionsRes, blocksRes, prsRes] = await Promise.all([
-        fetch(`${API_BASE}/api/sessions`, { headers: authHeaders() }),
-        fetch(`${API_BASE}/api/blocks`, { headers: authHeaders() }),
-        fetch(`${API_BASE}/api/prs`, { headers: authHeaders() })
-      ]);
-      if (handleAuthFailure(sessionsRes.status)) return;
-      if (handleAuthFailure(blocksRes.status)) return;
-      if (handleAuthFailure(prsRes.status)) return;
-      sessions = await sessionsRes.json();
-      blocks = await blocksRes.json();
-      prs = await prsRes.json();
+      const res = await fetch(`${API_BASE}/api/sessions`, { headers: authHeaders() });
+      if (handleAuthFailure(res.status)) return;
+      sessions = await res.json();
     } catch (err) {
       console.error(err);
       alert('Could not load dashboard data — is the server running?');
       return;
     }
 
-    const currentBlock = getCurrentBlock(blocks);
-    let scopedSessions = sessions;
-    if (currentBlock) {
-      const start = currentBlock.start_date.slice(0, 10);
-      const end = currentBlock.end_date ? currentBlock.end_date.slice(0, 10) : null;
-      scopedSessions = sessions.filter(s => {
-        const d = s.session_date.slice(0, 10);
-        return d >= start && (!end || d <= end);
-      });
-      document.getElementById('hero-label').textContent = `Projected total — ${currentBlock.name}`;
-      document.getElementById('block-note').innerHTML = '';
-    } else {
-      document.getElementById('hero-label').textContent = 'Projected total — all-time';
-      document.getElementById('block-note').innerHTML = 'No active training block right now. <a data-page="blocks" onclick="document.querySelector(\'.nav-btn[data-page=blocks]\').click()">Create one</a> to track a cycle.';
-    }
-
     const maxByLift = {};
-    scopedSessions.forEach(s => {
+    sessions.forEach(s => {
       s.sets.forEach(set => {
         const weight = parseFloat(set.weight_lb);
         if (!maxByLift[s.lift_type] || weight > maxByLift[s.lift_type]) maxByLift[s.lift_type] = weight;
       });
     });
-
-    const prByLift = {};
-    prs.forEach(p => { prByLift[p.lift_type] = parseFloat(p.weight_lb); });
-
+    const estimated = getEstimatedMaxes();
     const mainLifts = ['squat', 'bench', 'deadlift'];
+    const knownPRs = getKnownPRs();
+    let newKnownPRs = { ...knownPRs };
+
     let total = 0;
+    let anyReal = false;
     mainLifts.forEach(lift => {
       const el = document.getElementById('max-' + lift);
       const statEl = document.getElementById('stat-' + lift);
@@ -650,22 +467,36 @@
       if (existingChip) existingChip.remove();
 
       if (maxByLift[lift]) {
-        el.textContent = formatLb(maxByLift[lift]);
+        el.textContent = maxByLift[lift] + ' lb';
         total += maxByLift[lift];
-        // an all-time PR shows regardless of which block you're viewing
-        if (prByLift[lift] && maxByLift[lift] >= prByLift[lift]) {
+        anyReal = true;
+        if (!knownPRs[lift] || maxByLift[lift] > knownPRs[lift]) {
           statEl.classList.add('has-pr');
           const chip = document.createElement('div');
           chip.className = 'pr-chip';
-          chip.textContent = 'ALL-TIME PR';
+          chip.textContent = 'NEW PR';
           statEl.appendChild(chip);
         }
+        newKnownPRs[lift] = maxByLift[lift];
+      } else if (estimated[lift]) {
+        el.textContent = estimated[lift] + ' lb*';
+        total += estimated[lift];
       } else {
         el.textContent = '-';
       }
     });
-    document.getElementById('hero-total').innerHTML = (total > 0 ? formatLb(total) : '-');
-    document.getElementById('session-count').textContent = scopedSessions.length;
+    saveKnownPRs(newKnownPRs);
+    document.getElementById('hero-total').innerHTML = (total > 0 ? total : '-') + ' <small>lb' + (anyReal ? '' : ' (est.)') + '</small>';
+
+    document.getElementById('session-count').textContent = sessions.length;
+
+    const missingLift = mainLifts.some(lift => !maxByLift[lift]);
+    document.getElementById('estimator-card').style.display = missingLift ? 'block' : 'none';
+    if (missingLift) {
+      const select = document.getElementById('est-lift');
+      select.innerHTML = mainLifts.filter(lift => !maxByLift[lift])
+        .map(lift => `<option value="${lift}">${lift}</option>`).join('');
+    }
 
     const tbody = document.querySelector('#recent-table tbody');
     tbody.innerHTML = '';
@@ -675,15 +506,23 @@
       tr.innerHTML = `<td>${dateOnly}</td><td>${s.lift_type}</td><td>${s.sets.length}</td>`;
       tbody.appendChild(tr);
     });
+  }
 
-    const prTbody = document.querySelector('#pr-table tbody');
-    prTbody.innerHTML = '';
-    prs.forEach(p => {
-      const tr = document.createElement('tr');
-      const dateOnly = p.session_date.slice(0, 10);
-      tr.innerHTML = `<td>${p.lift_type}</td><td>${formatLb(p.weight_lb)} x ${p.reps}</td><td>${dateOnly}</td>`;
-      prTbody.appendChild(tr);
-    });
+  function estimateMax() {
+    const lift = document.getElementById('est-lift').value;
+    const weight = parseFloat(document.getElementById('est-weight').value);
+    const reps = parseInt(document.getElementById('est-reps').value);
+    if (!weight || !reps) { alert('Enter both a weight and a rep count.'); return; }
+
+    const estimate = Math.round(weight * (1 + reps / 30));
+
+    const estimated = getEstimatedMaxes();
+    estimated[lift] = estimate;
+    saveEstimatedMaxes(estimated);
+
+    document.getElementById('est-result').textContent =
+      `Estimated ${lift} 1RM: ${estimate} lb (marked with * until you log an actual max set)`;
+    renderDashboard();
   }
 
   // ---- history ----
@@ -705,26 +544,9 @@
       const top = s.sets.reduce((max, set) => parseFloat(set.weight_lb) > parseFloat(max.weight_lb) ? set : max, s.sets[0]);
       const dateOnly = s.session_date.slice(0, 10);
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${dateOnly}</td><td>${s.lift_type}</td><td>${s.sets.length}</td><td>${formatLb(top.weight_lb)} x ${top.reps}</td>
-        <td><button class="secondary" style="padding:4px 10px; font-size:12px; border-color:var(--accent); color:var(--accent);" onclick="deleteSession(${s.id})">Delete</button></td>`;
+      tr.innerHTML = `<td>${dateOnly}</td><td>${s.lift_type}</td><td>${s.sets.length}</td><td>${top.weight_lb}x${top.reps}</td>`;
       tbody.appendChild(tr);
     });
-  }
-
-  async function deleteSession(id) {
-    if (!confirm('Delete this session? This cannot be undone.')) return;
-    try {
-      const res = await fetch(`${API_BASE}/api/sessions/${id}`, {
-        method: 'DELETE',
-        headers: authHeaders()
-      });
-      if (handleAuthFailure(res.status)) return;
-      if (!res.ok) throw new Error('Failed to delete');
-      renderHistory();
-    } catch (err) {
-      console.error(err);
-      alert('Could not delete session.');
-    }
   }
 
   // ---- weight class ----
@@ -738,10 +560,8 @@
 
   async function addWeighIn() {
     const date = document.getElementById('weigh-date').value;
-    let value = parseFloat(document.getElementById('weigh-value').value);
-    const unit = document.getElementById('weigh-unit').value;
+    const value = parseFloat(document.getElementById('weigh-value').value);
     if (!date || !value) { alert('Enter a date and weight.'); return; }
-    if (unit === 'lb') value = Math.round(value * KG_PER_LB * 10) / 10;
 
     try {
       const res = await fetch(`${API_BASE}/api/weigh-ins`, {
@@ -759,13 +579,20 @@
     }
   }
 
-  function renderPlates(toGo) {
+  function renderPlates(toGo, direction) {
     const container = document.getElementById('wc-plates');
+    const note = document.getElementById('wc-plates-note');
     container.innerHTML = '';
     if (toGo <= 0) {
-      container.innerHTML = '<div style="color:var(--cut); font-weight:600;">Target reached — great cut.</div>';
+      const msg = direction === 'bulk' ? 'Target reached — great bulk.'
+        : direction === 'cut' ? 'Target reached — great cut.'
+        : '';
+      container.innerHTML = msg ? `<div style="color:var(--cut); font-weight:600;">${msg}</div>` : '';
+      note.style.display = 'none';
       return;
     }
+    note.style.display = 'block';
+    note.textContent = direction === 'bulk' ? 'each plate = 5kg still to gain' : 'each plate = 5kg toward your target';
     const plateCount = Math.ceil(toGo / 5);
     const shown = Math.min(plateCount, 10);
     for (let i = 0; i < shown; i++) {
@@ -811,7 +638,7 @@
     if (weighIns.length === 0) {
       document.getElementById('wc-current').textContent = '-';
       document.getElementById('wc-togo').textContent = '-';
-      renderPlates(0);
+      renderPlates(0, null);
       return;
     }
 
@@ -820,297 +647,19 @@
 
     if (!target) {
       document.getElementById('wc-togo').textContent = '-';
-      renderPlates(0);
+      renderPlates(0, null);
       return;
     }
 
-    const toGo = Math.max(0, currentWeight - target);
-    document.getElementById('wc-togo').textContent = toGo.toFixed(1) + ' kg';
-    renderPlates(toGo);
+    const diff = currentWeight - target;
+    const toGo = Math.abs(diff);
+    const direction = diff > 0 ? 'cut' : diff < 0 ? 'bulk' : null;
+    const suffix = direction === 'cut' ? ' to cut' : direction === 'bulk' ? ' to gain' : '';
+    document.getElementById('wc-togo').textContent = toGo.toFixed(1) + ' kg' + suffix;
+    renderPlates(toGo, direction);
   }
 
-  // ---- blocks page ----
-  async function createBlock() {
-    const name = document.getElementById('block-name').value;
-    const start_date = document.getElementById('block-start').value;
-    const end_date = document.getElementById('block-end').value;
-    if (!name || !start_date) { alert('Enter a name and start date.'); return; }
-
-    try {
-      const res = await fetch(`${API_BASE}/api/blocks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ name, start_date, end_date: end_date || null })
-      });
-      if (handleAuthFailure(res.status)) return;
-      if (!res.ok) throw new Error('Server responded with an error');
-      document.getElementById('block-name').value = '';
-      document.getElementById('block-start').value = '';
-      document.getElementById('block-end').value = '';
-      renderBlocks();
-    } catch (err) {
-      console.error(err);
-      alert('Could not create block — is the server running?');
-    }
-  }
-
-  async function renderBlocks() {
-    let blocks = [], sessions = [];
-    try {
-      const [blocksRes, sessionsRes] = await Promise.all([
-        fetch(`${API_BASE}/api/blocks`, { headers: authHeaders() }),
-        fetch(`${API_BASE}/api/sessions`, { headers: authHeaders() })
-      ]);
-      if (handleAuthFailure(blocksRes.status)) return;
-      if (handleAuthFailure(sessionsRes.status)) return;
-      blocks = await blocksRes.json();
-      sessions = await sessionsRes.json();
-    } catch (err) {
-      console.error(err);
-      document.getElementById('blocks-list').textContent = 'Could not load blocks.';
-      return;
-    }
-
-    const current = getCurrentBlock(blocks);
-    const list = document.getElementById('blocks-list');
-    if (blocks.length === 0) {
-      list.textContent = 'No blocks yet — create your first one above.';
-      return;
-    }
-    list.innerHTML = '';
-    blocks.forEach(b => {
-      const start = b.start_date.slice(0, 10);
-      const end = b.end_date ? b.end_date.slice(0, 10) : null;
-      const blockSessions = sessions.filter(s => {
-        const d = s.session_date.slice(0, 10);
-        return d >= start && (!end || d <= end);
-      });
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'block-row';
-      wrapper.style.cursor = 'pointer';
-
-      const isCurrent = current && current.id === b.id;
-      const endLabel = end || 'ongoing';
-
-      wrapper.innerHTML = `
-        <div>
-          <span class="block-name">${b.name}</span>${isCurrent ? '<span class="current-tag">CURRENT</span>' : ''}
-          <div class="block-dates">${start} → ${endLabel} · ${blockSessions.length} session${blockSessions.length === 1 ? '' : 's'}</div>
-        </div>
-        <span style="color:var(--text-muted); font-size:12px;">view &rarr;</span>
-      `;
-
-      wrapper.addEventListener('click', () => openBlockDetail(b, blockSessions, isCurrent));
-      list.appendChild(wrapper);
-    });
-  }
-
-  let currentBlockDetailId = null;
-  function openBlockDetail(block, blockSessions, isCurrent) {
-    currentBlockDetailId = block.id;
-    const start = block.start_date.slice(0, 10);
-    const end = block.end_date ? block.end_date.slice(0, 10) : 'ongoing';
-    document.getElementById('bd-name').textContent = block.name + (isCurrent ? ' — current block' : '');
-    document.getElementById('bd-dates').textContent = `${start} → ${end} · ${blockSessions.length} session${blockSessions.length === 1 ? '' : 's'}`;
-
-    const tbody = document.querySelector('#bd-table tbody');
-    tbody.innerHTML = '';
-    if (blockSessions.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);">No sessions logged in this block yet.</td></tr>';
-    } else {
-      blockSessions.forEach(s => {
-        const top = s.sets.reduce((max, set) => parseFloat(set.weight_lb) > parseFloat(max.weight_lb) ? set : max, s.sets[0]);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${s.session_date.slice(0, 10)}</td><td>${s.lift_type}</td><td>${s.sets.length}</td><td>${formatLb(top.weight_lb)} x ${top.reps}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-block-detail').classList.add('active');
-  }
-
-  function backToBlocks() {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-blocks').classList.add('active');
-  }
-
-  async function deleteCurrentBlock() {
-    if (!currentBlockDetailId) return;
-    if (!confirm('Delete this block? Its sessions stay in your History, only the block itself goes away.')) return;
-    try {
-      const res = await fetch(`${API_BASE}/api/blocks/${currentBlockDetailId}`, {
-        method: 'DELETE',
-        headers: authHeaders()
-      });
-      if (handleAuthFailure(res.status)) return;
-      if (!res.ok) throw new Error('Failed to delete');
-      backToBlocks();
-      renderBlocks();
-    } catch (err) {
-      console.error(err);
-      alert('Could not delete block.');
-    }
-  }
-
-  // ---- settings ----
-  function renderSettings() {
-    document.getElementById('display-unit-select').value = getDisplayUnit();
-  }
-
-  function saveDisplayUnit() {
-    const unit = document.getElementById('display-unit-select').value;
-    setDisplayUnit(unit);
-  }
-
-  async function changePassword() {
-    const currentPassword = document.getElementById('pw-current').value;
-    const newPassword = document.getElementById('pw-new').value;
-    const msgEl = document.getElementById('pw-message');
-    if (!currentPassword || !newPassword) { msgEl.style.color = 'var(--accent)'; msgEl.textContent = 'Fill in both fields.'; return; }
-
-    try {
-      const res = await fetch(`${API_BASE}/api/change-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ currentPassword, newPassword })
-      });
-      if (handleAuthFailure(res.status)) return;
-      const data = await res.json();
-      if (res.ok) {
-        msgEl.style.color = 'var(--cut)';
-        msgEl.textContent = 'Password updated.';
-        document.getElementById('pw-current').value = '';
-        document.getElementById('pw-new').value = '';
-      } else {
-        msgEl.style.color = 'var(--accent)';
-        msgEl.textContent = data.error || 'Could not update password.';
-      }
-    } catch (err) {
-      console.error(err);
-      msgEl.style.color = 'var(--accent)';
-      msgEl.textContent = 'Server error. Is the backend running?';
-    }
-  }
-
-  function csvEscape(value) {
-    const str = String(value === null || value === undefined ? '' : value);
-    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-      return '"' + str.replace(/"/g, '""') + '"';
-    }
-    return str;
-  }
-
-  async function exportData() {
-    try {
-      const [sessionsRes, weighInsRes, blocksRes, prsRes] = await Promise.all([
-        fetch(`${API_BASE}/api/sessions`, { headers: authHeaders() }),
-        fetch(`${API_BASE}/api/weigh-ins`, { headers: authHeaders() }),
-        fetch(`${API_BASE}/api/blocks`, { headers: authHeaders() }),
-        fetch(`${API_BASE}/api/prs`, { headers: authHeaders() })
-      ]);
-      if (handleAuthFailure(sessionsRes.status)) return;
-      const sessions = await sessionsRes.json();
-      const weighIns = await weighInsRes.json();
-      const blocks = await blocksRes.json();
-      const prs = await prsRes.json();
-
-      let csv = 'SESSIONS\n';
-      csv += 'date,lift,set_number,weight_lb,reps,rpe\n';
-      sessions.forEach(s => {
-        s.sets.forEach(set => {
-          csv += [s.session_date.slice(0, 10), s.lift_type, set.set_number, set.weight_lb, set.reps, set.rpe ?? '']
-            .map(csvEscape).join(',') + '\n';
-        });
-      });
-
-      csv += '\nWEIGH-INS\n';
-      csv += 'date,weight_kg\n';
-      weighIns.forEach(w => {
-        csv += [w.weigh_date.slice(0, 10), w.weight_kg].map(csvEscape).join(',') + '\n';
-      });
-
-      csv += '\nBLOCKS\n';
-      csv += 'name,start_date,end_date\n';
-      blocks.forEach(b => {
-        csv += [b.name, b.start_date.slice(0, 10), b.end_date ? b.end_date.slice(0, 10) : ''].map(csvEscape).join(',') + '\n';
-      });
-
-      csv += '\nALL-TIME PRS\n';
-      csv += 'lift,weight_lb,reps,date\n';
-      prs.forEach(p => {
-        csv += [p.lift_type, p.weight_lb, p.reps, p.session_date.slice(0, 10)].map(csvEscape).join(',') + '\n';
-      });
-
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `lift-log-export-${todayStr()}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-      alert('Could not export data — is the server running?');
-    }
-  }
-
-  async function resetAllData() {
-    if (!confirm('This deletes every session, weigh-in, and block you have. Your login stays active. This cannot be undone. Continue?')) return;
-    try {
-      const res = await fetch(`${API_BASE}/api/reset-data`, {
-        method: 'DELETE',
-        headers: authHeaders()
-      });
-      if (handleAuthFailure(res.status)) return;
-      if (!res.ok) throw new Error('Failed to reset');
-      alert('All data cleared.');
-      renderDashboard();
-    } catch (err) {
-      console.error(err);
-      alert('Could not reset data.');
-    }
-  }
-
-  async function deleteAccount() {
-    const password = document.getElementById('delete-account-password').value;
-    if (!password) { alert('Enter your password to confirm.'); return; }
-    if (!confirm('This permanently deletes your account and everything in it. This cannot be undone. Continue?')) return;
-
-    try {
-      const res = await fetch(`${API_BASE}/api/account`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ password })
-      });
-      if (handleAuthFailure(res.status)) return;
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.removeItem('token');
-        showAuthPage();
-      } else {
-        alert(data.error || 'Could not delete account.');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Server error. Is the backend running?');
-    }
-  }
-
-  // ---- standalone 1RM calculator (does not save anything) ----
-  function calcOneRepMax() {
-    const weight = parseFloat(document.getElementById('calc-weight').value);
-    const reps = parseInt(document.getElementById('calc-reps').value);
-    const unit = document.getElementById('calc-unit').value;
-    if (!weight || !reps) { alert('Enter both a weight and a rep count.'); return; }
-    const estimate = Math.round(weight * (1 + reps / 30) * 10) / 10;
-    document.getElementById('calc-result').textContent = `Estimated 1RM: ${estimate} ${unit}`;
-  }
-
-  // ---- initial paint ----
+  // ---- initial paint: show login if no token, otherwise go straight to the app ----
   if (getToken()) {
     showApp();
   } else {
