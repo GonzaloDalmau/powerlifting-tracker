@@ -11,6 +11,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// serve the frontend so the whole app runs from one local URL
+app.get('/', (req, res) => res.sendFile(require('path').join(__dirname, '..', 'index.html')));
+
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_lifting_key';
 
 function authenticateToken(req, res, next) {
@@ -267,6 +270,10 @@ app.get('/api/prs', authenticateToken, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server listening at http://localhost:${PORT} (db: ${pool.mode})`);
+  });
+}
+
+module.exports = app;

@@ -408,7 +408,11 @@
 </div>
 
 <script>
-  const API_BASE = 'https://powerlifting-tracker-production-7a3c.up.railway.app';
+  // local: page served by the node server (same origin) or opened as a file
+  const API_BASE =
+    location.protocol === 'file:' ? 'http://localhost:3000'
+    : ['localhost', '127.0.0.1'].includes(location.hostname) ? location.origin
+    : 'https://powerlifting-tracker-production-7a3c.up.railway.app';
   const KG_PER_LB = 0.45359237;
   const LB_PER_KG = 2.2046226218;
 
