@@ -133,7 +133,7 @@ test('blocks: create, list, delete', async () => {
   assert.equal((await api('GET', '/api/blocks', { token })).body.length, 0);
 });
 
-test('PRs: heaviest set per lift, earliest date on ties', async () => {
+test('PRs: heaviest set per lift, more reps then earliest date on ties', async () => {
   const token = await newUser('pr@x.com');
   const log = (date, lift, weights) =>
     api('POST', '/api/sessions', {
@@ -143,6 +143,15 @@ test('PRs: heaviest set per lift, earliest date on ties', async () => {
   await log('2026-11-01', 'squat', [400, 405]);
   await log('2026-11-08', 'squat', [405, 395]);
   await log('2026-11-02', 'deadlift', [500]);
+  // same weight for more reps is the better set
+  await api('POST', '/api/sessions', {
+    token,
+    body: { session_date: '2026-11-03', lift_type: 'bench', sets: [{ set_number: 1, weight_lb: 300, reps: 1 }] },
+  });
+  await api('POST', '/api/sessions', {
+    token,
+    body: { session_date: '2026-11-09', lift_type: 'bench', sets: [{ set_number: 1, weight_lb: 300, reps: 3 }] },
+  });
 
   const prs = await api('GET', '/api/prs', { token });
   assert.equal(prs.status, 200);
@@ -150,6 +159,7 @@ test('PRs: heaviest set per lift, earliest date on ties', async () => {
   assert.equal(Number(byLift.squat.weight_lb), 405);
   assert.equal(new Date(byLift.squat.session_date).toISOString().slice(0, 10), '2026-11-01');
   assert.equal(Number(byLift.deadlift.weight_lb), 500);
+  assert.equal(byLift.bench.reps, 3);
 });
 
 test('change password', async () => {
@@ -182,4 +192,48 @@ test('delete account requires password and cascades', async () => {
   assert.equal((await api('POST', '/api/login', { body: { email: 'gone@x.com', password: 'pass1234' } })).status, 400);
   const mine = await pool.query("SELECT count(*)::int AS n FROM sessions s JOIN users u ON u.id = s.user_id WHERE u.email = 'gone@x.com'");
   assert.equal(mine.rows[0].n, 0);
+});
+
+test('demo: creates an isolated account with sample data', async () => {
+  const a = await api('POST', '/api/demo');
+  assert.equal(a.status, 201);
+  assert.equal(a.body.demo, true);
+  const token = a.body.token;
+
+  const sessions = (await api('GET', '/api/sessions', { token })).body;
+  assert.ok(sessions.length >= 40, `expected sample sessions, got ${sessions.length}`);
+  assert.ok(sessions.every((s) => s.sets.length > 0));
+  assert.deepEqual([...new Set(sessions.map((s) => s.lift_type))].sort(), ['bench', 'deadlift', 'squat']);
+
+  const blocks = (await api('GET', '/api/blocks', { token })).body;
+  assert.equal(blocks.length, 2);
+  assert.equal(blocks.filter((b) => b.end_date === null).length, 1, 'one ongoing block');
+
+  assert.ok((await api('GET', '/api/weigh-ins', { token })).body.length > 0);
+  assert.equal((await api('GET', '/api/prs', { token })).body.length, 3);
+
+  // a second visitor gets a separate account; changes in one never show in the other
+  const b = (await api('POST', '/api/demo')).body.token;
+  await api('DELETE', '/api/reset-data', { token: b });
+  assert.equal((await api('GET', '/api/sessions', { token: b })).body.length, 0);
+  assert.equal((await api('GET', '/api/sessions', { token })).body.length, sessions.length);
+});
+
+test('demo: expired demo users are cleaned up, real users are not', async () => {
+  const { DEMO_DOMAIN } = require('../demo');
+  const realToken = await newUser('keepme@x.com');
+  const old = (await api('POST', '/api/demo')).body;
+  await pool.query(`UPDATE users SET created_at = now() - interval '2 days' WHERE id = $1`, [old.userId]);
+  await pool.query(`UPDATE users SET created_at = now() - interval '2 days' WHERE email = 'keepme@x.com'`);
+
+  await api('POST', '/api/demo'); // triggers cleanup
+  const gone = await pool.query('SELECT 1 FROM users WHERE id = $1', [old.userId]);
+  assert.equal(gone.rows.length, 0);
+  assert.equal((await api('GET', '/api/sessions', { token: realToken })).status, 200);
+  const kept = await pool.query(`SELECT 1 FROM users WHERE email = 'keepme@x.com'`);
+  assert.equal(kept.rows.length, 1);
+
+  // nobody can register into the demo domain and get swept up by cleanup
+  const reg = await api('POST', '/api/register', { body: { email: `me@${DEMO_DOMAIN}`, password: 'x' } });
+  assert.equal(reg.status, 400);
 });

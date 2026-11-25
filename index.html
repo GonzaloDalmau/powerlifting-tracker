@@ -25,7 +25,14 @@
     --accent: #a34633; /* Rusted iron */
     --accent-dim: #6b2b1f;
     --gold: #a68b5a; /* Aged brass */
-    --cut: #547055; 
+    --cut: #547055;
+
+    /* chart series: dark categorical slots 1-3, validated against --surface (all-pairs CVD-safe) */
+    --series-squat: #3987e5;
+    --series-bench: #d95926;
+    --series-deadlift: #199e70;
+    --grid: #26262a;
+    --axis: #3d3d42;
   }
 
   * { box-sizing: border-box; }
@@ -71,10 +78,44 @@
   .quote-bar span.mark { color: var(--gold); font-style: normal; font-weight: 600; margin-right: 6px; }
 
   .hero-total { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; margin-bottom: 6px;
-    display: flex; align-items: baseline; justify-content: space-between; }
+    display: flex; align-items: flex-end; gap: 48px; flex-wrap: wrap; }
   .hero-total .label { font-size: 13px; color: var(--text-secondary); letter-spacing: 0.08em; }
   .hero-total .display-num { font-size: 40px; color: var(--text); font-weight: 700; }
+  .hero-total .display-num.actual { font-size: 28px; color: var(--text-secondary); }
   .hero-total .display-num small { font-size: 16px; color: var(--text-secondary); font-weight: 500; text-transform: none; letter-spacing: 0; }
+  .hero-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  .scope-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .scope-row .scope-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; }
+  .seg { display: inline-flex; border: 1px solid var(--border-strong); }
+  .seg button { background: transparent; border: none; color: var(--text-secondary); padding: 7px 14px; cursor: pointer; font-size: 13px; }
+  .seg button + button { border-left: 1px solid var(--border-strong); }
+  .seg button:hover { color: var(--text); }
+  .seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--text); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+
+  .stat .est-tag { font-size: 10px; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; margin-left: 4px; font-family: 'Inter', sans-serif; font-weight: 500; }
+  .stat .sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .stat .delta { font-size: 12px; color: var(--text); margin-top: 2px; }
+  .stat .swatch { display: inline-block; width: 10px; height: 2px; border-radius: 1px; vertical-align: middle; margin-right: 6px; }
+  .formula-note { font-size: 12px; color: var(--text-secondary); margin: -8px 0 20px; }
+
+  .chart-legend { display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); margin: -6px 0 10px; flex-wrap: wrap; }
+  .chart-legend .key, .chart-tip .tip-key { display: inline-block; width: 14px; height: 2px; border-radius: 1px; vertical-align: middle; margin-right: 6px; }
+  .chart-wrap { position: relative; }
+  .chart-wrap svg { display: block; width: 100%; overflow: visible; }
+  .chart-wrap .overlay { cursor: crosshair; outline: none; }
+  .chart-wrap:has(.overlay:focus-visible) { outline: 1px solid var(--gold); outline-offset: 4px; }
+  .chart-tip { position: absolute; top: 0; left: 0; pointer-events: none; background: #0e0e10; border: 1px solid var(--border-strong);
+               padding: 8px 10px; font-size: 12px; min-width: 170px; display: none; z-index: 2; box-shadow: 0 4px 14px rgba(0,0,0,0.5); }
+  .chart-tip .tip-date { color: var(--text-secondary); margin-bottom: 4px; }
+  .chart-tip .tip-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; white-space: nowrap; }
+  .chart-tip .tip-row strong { color: var(--text); font-weight: 600; }
+  .chart-tip .tip-row .name { color: var(--text-secondary); }
+  .chart-tip .tip-key { margin-right: 2px; }
+  .chart-empty { color: var(--text-secondary); font-size: 13px; padding: 30px 0; text-align: center; }
+  td .cell-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  details.chart-table summary { cursor: pointer; font-size: 12px; color: var(--text-secondary); margin-top: 12px; }
+  details.chart-table table { margin-top: 8px; }
   .block-note { font-size: 12px; color: var(--text-muted); margin: 0 0 20px; }
   .block-note a { color: var(--gold); cursor: pointer; text-decoration: underline; }
 
@@ -113,6 +154,18 @@
   .block-row .block-dates { font-size: 12px; color: var(--text-secondary); }
   .current-tag { background: var(--gold); color: #1a1a1a; font-size: 10px; font-weight: 700; padding: 2px 8px; letter-spacing: 0.05em; margin-left: 8px; }
 
+  .demo-banner { display: none; background: var(--surface); border: 1px solid var(--gold); padding: 10px 14px; margin-bottom: 20px;
+                 font-size: 13px; color: var(--text-secondary); align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .demo-banner strong { color: var(--gold); letter-spacing: 0.05em; margin-right: 6px; }
+  body.demo .demo-banner { display: flex; }
+  body.demo .hide-in-demo { display: none; }
+  body.signed-out .demo-banner { display: none; }
+  .demo-divider { text-align: center; font-size: 12px; color: var(--text-muted); margin: 18px 0 12px; }
+  button.demo-btn { width: 100%; background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 10px 14px;
+                    cursor: pointer; font-weight: 600; letter-spacing: 0.03em; }
+  button.demo-btn:hover { background: rgba(166, 139, 90, 0.1); }
+  button.demo-btn:disabled { opacity: 0.6; cursor: wait; }
+
   .unit-row { display: flex; gap: 8px; align-items: flex-end; }
   .unit-row select { max-width: 90px; }
 
@@ -128,8 +181,9 @@
     h2 { font-size: 19px; margin-bottom: 14px; }
     .quote-bar { font-size: 13px; padding: 10px 12px; }
 
-    .hero-total { flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; }
+    .hero-total { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px 16px; }
     .hero-total .display-num { font-size: 30px; }
+    .hero-total .display-num.actual { font-size: 22px; }
 
     .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
     .stat { padding: 10px; }
@@ -137,7 +191,7 @@
 
     .card { padding: 14px; }
 
-    #history-table, #recent-table, #weight-table, #pr-table { display: block; }
+    #history-table, #recent-table, #weight-table, #pr-table, #trend-table, #bd-table { display: block; }
     .card:has(table) { overflow-x: auto; }
     th, td { padding: 8px 5px; font-size: 12.5px; }
 
@@ -172,6 +226,11 @@
 
 <div class="main">
 
+  <div class="demo-banner">
+    <span><strong>DEMO</strong>You're looking at sample data. Feel free to log, edit and delete. Nothing here is kept.</span>
+    <button class="secondary" onclick="logoutUser()" style="padding:6px 12px; font-size:13px;">Create your own account</button>
+  </div>
+
   <div class="page" id="page-auth">
     <h2>Welcome to Lift Log</h2>
     <div class="card" style="max-width: 400px; margin: 0 auto;">
@@ -185,6 +244,9 @@
         <button class="secondary" onclick="registerUser()" style="flex: 1;">Sign Up</button>
       </div>
       <div id="auth-message" style="margin-top: 15px; font-size: 14px; color: var(--accent);"></div>
+      <div class="demo-divider">or</div>
+      <button class="demo-btn" id="demo-btn" onclick="startDemo()">Try the demo, no sign-up</button>
+      <p style="font-size:12px; color:var(--text-muted); margin:8px 0 0; text-align:center;">Look around 16 weeks of sample squat, bench and deadlift training. Demo data is deleted after 24 hours.</p>
     </div>
   </div>
 
@@ -201,32 +263,60 @@
         <rect x="40" y="9" width="4" height="6" fill="currentColor"/>
       </svg>
       <div>
-        <div class="label" id="hero-label">Projected total</div>
-        <div class="display-num" id="hero-total">- <small>lb</small></div>
+        <div class="label" id="hero-label">Estimated total</div>
+        <div class="display-num" id="hero-total">-</div>
+        <div class="hero-sub" id="hero-sub">Sum of your best estimated 1RMs</div>
+      </div>
+      <div>
+        <div class="label">Heaviest lifted</div>
+        <div class="display-num actual" id="hero-actual">-</div>
+        <div class="hero-sub">Sum of the heaviest weights you actually moved</div>
       </div>
     </div>
     <div class="block-note" id="block-note"></div>
 
+    <div class="scope-row" id="scope-row">
+      <span class="scope-label">Showing</span>
+      <div class="seg" role="group" aria-label="Dashboard time range">
+        <button data-scope="block" aria-pressed="true" onclick="setDashScope('block')">Current block</button>
+        <button data-scope="all" aria-pressed="false" onclick="setDashScope('all')">All time</button>
+      </div>
+    </div>
+
     <div class="stats">
-      <div class="stat" id="stat-squat"><div class="label">Squat max</div><div class="value" id="max-squat">-</div></div>
-      <div class="stat" id="stat-bench"><div class="label">Bench max</div><div class="value" id="max-bench">-</div></div>
-      <div class="stat" id="stat-deadlift"><div class="label">Deadlift max</div><div class="value" id="max-deadlift">-</div></div>
-      <div class="stat"><div class="label">Sessions this block</div><div class="value" id="session-count">0</div></div>
+      <div class="stat" id="stat-squat"><div class="label"><span class="swatch" style="background:var(--series-squat)"></span>Squat</div><div class="value" id="max-squat">-</div><div class="sub" id="sub-squat"></div><div class="delta" id="delta-squat"></div></div>
+      <div class="stat" id="stat-bench"><div class="label"><span class="swatch" style="background:var(--series-bench)"></span>Bench</div><div class="value" id="max-bench">-</div><div class="sub" id="sub-bench"></div><div class="delta" id="delta-bench"></div></div>
+      <div class="stat" id="stat-deadlift"><div class="label"><span class="swatch" style="background:var(--series-deadlift)"></span>Deadlift</div><div class="value" id="max-deadlift">-</div><div class="sub" id="sub-deadlift"></div><div class="delta" id="delta-deadlift"></div></div>
+      <div class="stat"><div class="label" id="session-count-label">Sessions this block</div><div class="value" id="session-count">0</div></div>
+    </div>
+    <p class="formula-note">Big numbers are <strong>estimated</strong> 1-rep maxes (Epley: weight × (1 + reps ÷ 30); a single counts as-is). The line under each one is the heaviest set you actually lifted. Estimates get less reliable above about 10 reps.</p>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Estimated 1RM trend</h3>
+      <div class="chart-legend" id="trend-legend"></div>
+      <div class="chart-wrap" id="trend-chart"></div>
+      <details class="chart-table">
+        <summary>Show as table</summary>
+        <table id="trend-table">
+          <thead><tr><th>Date</th><th>Lift</th><th>Est. 1RM</th><th>From set</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </details>
     </div>
 
     <div class="card">
       <h3 style="margin-top:0;">Recent sessions</h3>
       <table id="recent-table">
-        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th></tr></thead>
+        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th><th>Est. 1RM</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
 
     <div class="card">
       <h3 style="margin-top:0;">All-time PRs</h3>
-      <p style="font-size:12px; color:var(--text-secondary); margin-top:-8px; font-style:normal;">Your best set ever logged for each lift, no matter which block it happened in.</p>
+      <p style="font-size:12px; color:var(--text-secondary); margin-top:-8px; font-style:normal;">Your best ever for each lift, no matter which block it happened in. "Heaviest lifted" is a real set; "best estimated 1RM" is a calculation from your best set.</p>
       <table id="pr-table">
-        <thead><tr><th>Lift</th><th>Best set</th><th>Date</th></tr></thead>
+        <thead><tr><th>Lift</th><th>Heaviest lifted</th><th>Best est. 1RM</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -261,7 +351,7 @@
     <h2>History</h2>
     <div class="card">
       <table id="history-table">
-        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th><th></th></tr></thead>
+        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th><th>Est. 1RM</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -328,7 +418,7 @@
     <div class="card">
       <h3 style="margin-top:0;">Sessions in this block</h3>
       <table id="bd-table">
-        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th></tr></thead>
+        <thead><tr><th>Date</th><th>Lift</th><th>Sets</th><th>Top set</th><th>Est. 1RM</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -358,7 +448,7 @@
   <div class="page" id="page-settings">
     <h2>Settings</h2>
 
-    <div class="card">
+    <div class="card hide-in-demo">
       <h3 style="margin-top:0;">Account</h3>
       <label>Current password</label>
       <input type="password" id="pw-current" placeholder="••••••••">
@@ -396,7 +486,7 @@
         <button class="secondary" style="border-color: var(--accent); color: var(--accent);" onclick="resetAllData()">Reset all data</button>
       </div>
 
-      <div>
+      <div class="hide-in-demo">
         <label>Delete account</label>
         <p style="font-size:12px; color:var(--text-secondary); margin-top:-6px; font-style:normal;">Permanently deletes your account and everything in it. Enter your password to confirm.</p>
         <input type="password" id="delete-account-password" placeholder="Confirm your password">
@@ -427,15 +517,25 @@
 
   // ---- auth helpers ----
   function getToken() { return localStorage.getItem('token'); }
+  function isDemo() { return localStorage.getItem('demo') === '1'; }
+  function clearSession() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('demo');
+    localStorage.removeItem('demoTargetClass');
+  }
   function authHeaders() {
     const token = getToken();
     return token ? { 'Authorization': `Bearer ${token}` } : {};
   }
   function showAuthPage() {
+    document.body.classList.remove('demo');
+    document.body.classList.add('signed-out');
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-auth').classList.add('active');
   }
   function showApp() {
+    document.body.classList.toggle('demo', isDemo());
+    document.body.classList.remove('signed-out');
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-dashboard').classList.add('active');
     document.querySelectorAll('.nav-btn[data-page]').forEach(b => b.classList.remove('active'));
@@ -443,12 +543,12 @@
     renderDashboard();
   }
   function logoutUser() {
-    localStorage.removeItem('token');
+    clearSession();
     showAuthPage();
   }
   function handleAuthFailure(status) {
     if (status === 401 || status === 403) {
-      localStorage.removeItem('token');
+      clearSession();
       showAuthPage();
       return true;
     }
@@ -490,6 +590,7 @@
       });
       const data = await res.json();
       if (res.ok) {
+        clearSession();
         localStorage.setItem('token', data.token);
         showApp();
       } else {
@@ -498,6 +599,30 @@
       }
     } catch (err) {
       msgEl.textContent = 'Server error. Is the backend running?';
+    }
+  }
+
+  async function startDemo() {
+    const btn = document.getElementById('demo-btn');
+    const msgEl = document.getElementById('auth-message');
+    btn.disabled = true;
+    btn.textContent = 'Loading sample data…';
+    try {
+      const res = await fetch(`${API_BASE}/api/demo`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not start demo');
+      clearSession();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('demo', '1');
+      msgEl.textContent = '';
+      showApp();
+    } catch (err) {
+      console.error(err);
+      msgEl.style.color = 'var(--accent)';
+      msgEl.textContent = 'Could not start the demo. Is the backend running?';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Try the demo, no sign-up';
     }
   }
 
@@ -596,21 +721,84 @@
     return active[0];
   }
 
+  // ---- progress math (shared by dashboard, history, blocks, calculator) ----
+  const MAIN_LIFTS = ['squat', 'bench', 'deadlift'];
+  const LIFT_COLORS = { squat: 'var(--series-squat)', bench: 'var(--series-bench)', deadlift: 'var(--series-deadlift)' };
+
+  // Epley estimate; a single is already a 1RM, so it counts as-is
+  function e1rm(weight, reps) {
+    const w = parseFloat(weight), r = parseInt(reps);
+    if (!(w > 0) || !(r > 0)) return 0;
+    return r === 1 ? w : w * (1 + r / 30);
+  }
+  function bestE1rmSet(sets) {
+    let best = null;
+    sets.forEach(set => {
+      const e1 = e1rm(set.weight_lb, set.reps);
+      if (!best || e1 > best.e1) best = { e1, set };
+    });
+    return best;
+  }
+  // heaviest weight; same weight for more reps wins
+  function heaviestSet(sets) {
+    return sets.reduce((max, set) => {
+      const w = parseFloat(set.weight_lb), mw = parseFloat(max.weight_lb);
+      return w > mw || (w === mw && set.reps > max.reps) ? set : max;
+    }, sets[0]);
+  }
+  function sessionDate(s) { return s.session_date.slice(0, 10); }
+  function toDisplay(lb) { return getDisplayUnit() === 'kg' ? lb * KG_PER_LB : lb; }
+  function unitLabel() { return getDisplayUnit(); }
+  function formatWhole(lb) { return Math.round(toDisplay(lb)) + ' ' + unitLabel(); }
+  function formatSet(set) { return `${formatLb(set.weight_lb)} × ${set.reps}`; }
+  function formatShortDate(iso) {
+    return new Date(iso + 'T00:00:00Z').toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  }
+  function fillRow(tr, values) {
+    values.forEach(v => { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
+    return tr;
+  }
+
+  // per-lift summary of sessions (any order in, ascending points out)
+  function summarizeLifts(sessions) {
+    const byLift = {};
+    sessions.slice().sort((a, b) => sessionDate(a).localeCompare(sessionDate(b))).forEach(s => {
+      if (!s.sets || s.sets.length === 0) return;
+      const date = sessionDate(s);
+      const best = bestE1rmSet(s.sets);
+      const heavy = heaviestSet(s.sets);
+      const sum = byLift[s.lift_type] || (byLift[s.lift_type] = { points: [], best: null, heaviest: null });
+      sum.points.push({ date, t: Date.parse(date + 'T00:00:00Z'), e1: best.e1, set: best.set });
+      if (!sum.best || best.e1 > sum.best.e1) sum.best = { e1: best.e1, set: best.set, date };
+      const hw = parseFloat(heavy.weight_lb);
+      const prev = sum.heaviest && parseFloat(sum.heaviest.set.weight_lb);
+      if (!sum.heaviest || hw > prev || (hw === prev && heavy.reps > sum.heaviest.set.reps)) {
+        sum.heaviest = { set: heavy, date };
+      }
+    });
+    return byLift;
+  }
+
   // ---- dashboard ----
+  function getDashScope() { return localStorage.getItem('dashScope') || 'block'; }
+  function setDashScope(scope) { localStorage.setItem('dashScope', scope); renderDashboard(); }
+
+  function setHeroNumber(el, lb) {
+    if (!lb) { el.textContent = '-'; return; }
+    el.innerHTML = `${Math.round(toDisplay(lb))} <small>${unitLabel()}</small>`;
+  }
+
   async function renderDashboard() {
-    let sessions = [], blocks = [], prs = [];
+    let sessions = [], blocks = [];
     try {
-      const [sessionsRes, blocksRes, prsRes] = await Promise.all([
+      const [sessionsRes, blocksRes] = await Promise.all([
         fetch(`${API_BASE}/api/sessions`, { headers: authHeaders() }),
-        fetch(`${API_BASE}/api/blocks`, { headers: authHeaders() }),
-        fetch(`${API_BASE}/api/prs`, { headers: authHeaders() })
+        fetch(`${API_BASE}/api/blocks`, { headers: authHeaders() })
       ]);
       if (handleAuthFailure(sessionsRes.status)) return;
       if (handleAuthFailure(blocksRes.status)) return;
-      if (handleAuthFailure(prsRes.status)) return;
       sessions = await sessionsRes.json();
       blocks = await blocksRes.json();
-      prs = await prsRes.json();
     } catch (err) {
       console.error(err);
       alert('Could not load dashboard data — is the server running?');
@@ -618,77 +806,324 @@
     }
 
     const currentBlock = getCurrentBlock(blocks);
+    const scope = currentBlock && getDashScope() === 'block' ? 'block' : 'all';
+    document.getElementById('scope-row').style.display = currentBlock ? '' : 'none';
+    document.querySelectorAll('#scope-row [data-scope]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.scope === scope)));
+
     let scopedSessions = sessions;
-    if (currentBlock) {
+    if (scope === 'block') {
       const start = currentBlock.start_date.slice(0, 10);
       const end = currentBlock.end_date ? currentBlock.end_date.slice(0, 10) : null;
       scopedSessions = sessions.filter(s => {
-        const d = s.session_date.slice(0, 10);
+        const d = sessionDate(s);
         return d >= start && (!end || d <= end);
       });
-      document.getElementById('hero-label').textContent = `Projected total — ${currentBlock.name}`;
-      document.getElementById('block-note').innerHTML = '';
+      document.getElementById('hero-label').textContent = `Estimated total — ${currentBlock.name}`;
+      document.getElementById('session-count-label').textContent = 'Sessions this block';
     } else {
-      document.getElementById('hero-label').textContent = 'Projected total — all-time';
-      document.getElementById('block-note').innerHTML = 'No active training block right now. <a data-page="blocks" onclick="document.querySelector(\'.nav-btn[data-page=blocks]\').click()">Create one</a> to track a cycle.';
+      document.getElementById('hero-label').textContent = 'Estimated total — all-time';
+      document.getElementById('session-count-label').textContent = 'Sessions all-time';
     }
+    document.getElementById('block-note').innerHTML = currentBlock ? '' :
+      'No active training block right now. <a data-page="blocks" onclick="document.querySelector(\'.nav-btn[data-page=blocks]\').click()">Create one</a> to track a cycle.';
 
-    const maxByLift = {};
-    scopedSessions.forEach(s => {
-      s.sets.forEach(set => {
-        const weight = parseFloat(set.weight_lb);
-        if (!maxByLift[s.lift_type] || weight > maxByLift[s.lift_type]) maxByLift[s.lift_type] = weight;
-      });
-    });
+    const scoped = summarizeLifts(scopedSessions);
+    const allTime = summarizeLifts(sessions);
 
-    const prByLift = {};
-    prs.forEach(p => { prByLift[p.lift_type] = parseFloat(p.weight_lb); });
-
-    const mainLifts = ['squat', 'bench', 'deadlift'];
-    let total = 0;
-    mainLifts.forEach(lift => {
-      const el = document.getElementById('max-' + lift);
+    let estTotal = 0, actualTotal = 0, liftsLogged = 0;
+    MAIN_LIFTS.forEach(lift => {
       const statEl = document.getElementById('stat-' + lift);
+      const valueEl = document.getElementById('max-' + lift);
+      const subEl = document.getElementById('sub-' + lift);
+      const deltaEl = document.getElementById('delta-' + lift);
       statEl.classList.remove('has-pr');
       const existingChip = statEl.querySelector('.pr-chip');
       if (existingChip) existingChip.remove();
 
-      if (maxByLift[lift]) {
-        el.textContent = formatLb(maxByLift[lift]);
-        total += maxByLift[lift];
-        // an all-time PR shows regardless of which block you're viewing
-        if (prByLift[lift] && maxByLift[lift] >= prByLift[lift]) {
-          statEl.classList.add('has-pr');
-          const chip = document.createElement('div');
-          chip.className = 'pr-chip';
-          chip.textContent = 'ALL-TIME PR';
-          statEl.appendChild(chip);
-        }
+      const sum = scoped[lift];
+      if (!sum) {
+        valueEl.textContent = '-';
+        subEl.textContent = 'No sessions yet';
+        deltaEl.textContent = '';
+        return;
+      }
+      liftsLogged++;
+      estTotal += sum.best.e1;
+      actualTotal += parseFloat(sum.heaviest.set.weight_lb);
+
+      valueEl.innerHTML = `${formatWhole(sum.best.e1)}<span class="est-tag">est.</span>`;
+      subEl.textContent = `Heaviest lifted: ${formatSet(sum.heaviest.set)}`;
+
+      // change: best estimate in range vs the first session in range
+      if (sum.points.length > 1) {
+        const diff = sum.best.e1 - sum.points[0].e1;
+        const since = scope === 'block' ? 'since block start' : 'since first session';
+        deltaEl.textContent = Math.round(toDisplay(diff)) >= 1 ? `▲ ${formatWhole(diff)} ${since}` : `No change ${since}`;
       } else {
-        el.textContent = '-';
+        deltaEl.textContent = '1 session so far';
+      }
+
+      // in block view, flag a block that contains the all-time heaviest lift
+      const allHeavy = allTime[lift] && parseFloat(allTime[lift].heaviest.set.weight_lb);
+      if (scope === 'block' && allHeavy && parseFloat(sum.heaviest.set.weight_lb) >= allHeavy) {
+        statEl.classList.add('has-pr');
+        const chip = document.createElement('div');
+        chip.className = 'pr-chip';
+        chip.textContent = 'ALL-TIME PR';
+        statEl.appendChild(chip);
       }
     });
-    document.getElementById('hero-total').innerHTML = (total > 0 ? formatLb(total) : '-');
+
+    setHeroNumber(document.getElementById('hero-total'), estTotal);
+    setHeroNumber(document.getElementById('hero-actual'), actualTotal);
+    document.getElementById('hero-sub').textContent = liftsLogged === 3 || liftsLogged === 0
+      ? 'Sum of your best estimated 1RMs'
+      : `Sum of your best estimated 1RMs (only ${liftsLogged} of 3 lifts logged)`;
     document.getElementById('session-count').textContent = scopedSessions.length;
+
+    renderTrendChart(scoped);
+    renderTrendTable(scoped);
 
     const tbody = document.querySelector('#recent-table tbody');
     tbody.innerHTML = '';
-    sessions.slice(0, 5).forEach(s => {
-      const tr = document.createElement('tr');
-      const dateOnly = s.session_date.slice(0, 10);
-      tr.innerHTML = `<td>${dateOnly}</td><td>${s.lift_type}</td><td>${s.sets.length}</td>`;
-      tbody.appendChild(tr);
+    sessions.filter(s => s.sets.length).slice(0, 5).forEach(s => {
+      tbody.appendChild(fillRow(document.createElement('tr'),
+        [sessionDate(s), s.lift_type, s.sets.length, formatSet(heaviestSet(s.sets)), formatWhole(bestE1rmSet(s.sets).e1)]));
     });
 
     const prTbody = document.querySelector('#pr-table tbody');
     prTbody.innerHTML = '';
-    prs.forEach(p => {
-      const tr = document.createElement('tr');
-      const dateOnly = p.session_date.slice(0, 10);
-      tr.innerHTML = `<td>${p.lift_type}</td><td>${formatLb(p.weight_lb)} x ${p.reps}</td><td>${dateOnly}</td>`;
+    const rank = l => (MAIN_LIFTS.indexOf(l) + 1) || 99;
+    Object.keys(allTime).sort((a, b) => rank(a) - rank(b) || a.localeCompare(b)).forEach(lift => {
+      const p = allTime[lift];
+      const tr = fillRow(document.createElement('tr'), [lift, formatSet(p.heaviest.set), formatWhole(p.best.e1)]);
+      // second line under each value: when it happened / which set it came from
+      const sub = (cell, text) => { const d = document.createElement('div'); d.className = 'cell-sub'; d.textContent = text; cell.appendChild(d); };
+      sub(tr.children[1], p.heaviest.date);
+      sub(tr.children[2], `from ${formatSet(p.best.set)} · ${p.best.date}`);
       prTbody.appendChild(tr);
     });
   }
+
+  function renderTrendTable(byLift) {
+    const rows = MAIN_LIFTS.flatMap(lift => (byLift[lift] ? byLift[lift].points.map(p => ({ lift, ...p })) : []))
+      .sort((a, b) => b.t - a.t || a.lift.localeCompare(b.lift));
+    const tbody = document.querySelector('#trend-table tbody');
+    tbody.innerHTML = '';
+    rows.forEach(r => tbody.appendChild(fillRow(document.createElement('tr'), [r.date, r.lift, formatWhole(r.e1), formatSet(r.set)])));
+  }
+
+  // ---- estimated 1RM trend chart (inline SVG, crosshair tooltip) ----
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const DAY_MS = 864e5;
+  function svgEl(tag, attrs = {}, style = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+    Object.assign(el.style, style);
+    return el;
+  }
+  function niceStep(raw) {
+    const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / pow;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * pow;
+  }
+
+  let trendState = null;
+  let trendWidth = 0;
+  function renderTrendChart(byLift) {
+    trendState = byLift;
+    const wrap = document.getElementById('trend-chart');
+    const legend = document.getElementById('trend-legend');
+    wrap.innerHTML = '';
+    legend.innerHTML = '';
+    const lifts = MAIN_LIFTS.filter(l => byLift[l] && byLift[l].points.length);
+    if (lifts.length === 0) {
+      wrap.innerHTML = '<div class="chart-empty">Log a squat, bench or deadlift session to see your estimated 1RM trend.</div>';
+      return;
+    }
+    lifts.forEach(lift => {
+      const item = document.createElement('span');
+      const key = document.createElement('span');
+      key.className = 'key';
+      key.style.background = LIFT_COLORS[lift];
+      item.append(key, document.createTextNode(lift));
+      legend.appendChild(item);
+    });
+
+    const W = wrap.clientWidth || 640;
+    trendWidth = W;
+    const narrow = W < 500;
+    const H = narrow ? 210 : 250;
+    const m = { top: 12, right: narrow ? 78 : 104, bottom: 26, left: 40 };
+    const plotW = W - m.left - m.right, plotH = H - m.top - m.bottom;
+
+    const all = lifts.flatMap(l => byLift[l].points);
+    let tMin = Math.min(...all.map(p => p.t)), tMax = Math.max(...all.map(p => p.t));
+    if (tMin === tMax) { tMin -= 3 * DAY_MS; tMax += 3 * DAY_MS; }
+    let vMin = Math.min(...all.map(p => toDisplay(p.e1))), vMax = Math.max(...all.map(p => toDisplay(p.e1)));
+    if (vMax - vMin < 10) { vMin -= 10; vMax += 10; }
+    const step = niceStep((vMax - vMin) / 4);
+    const yLo = Math.floor(vMin / step) * step, yHi = Math.ceil(vMax / step) * step;
+    const x = t => m.left + (t - tMin) / (tMax - tMin) * plotW;
+    const y = v => m.top + (1 - (v - yLo) / (yHi - yLo)) * plotH;
+
+    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img',
+      'aria-label': `Estimated one-rep max over time (${unitLabel()}) for ${lifts.join(', ')}. Use "Show as table" below for the values.` });
+
+    // gridlines + y ticks
+    for (let v = yLo; v <= yHi + step / 2; v += step) {
+      svg.appendChild(svgEl('line', { x1: m.left, x2: m.left + plotW, y1: y(v), y2: y(v), 'stroke-width': 1 },
+        { stroke: Math.abs(v - yLo) < 1e-9 ? 'var(--axis)' : 'var(--grid)' }));
+      const label = svgEl('text', { x: m.left - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 11 },
+        { fill: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' });
+      label.textContent = Math.round(v * 10) / 10;
+      svg.appendChild(label);
+    }
+
+    // x ticks: month starts for long ranges, weekly for short ones
+    const longRange = tMax - tMin > 50 * DAY_MS;
+    const ticks = [];
+    if (longRange) {
+      const d0 = new Date(tMin);
+      let cur = Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth() + 1, 1);
+      while (cur <= tMax) {
+        ticks.push(cur);
+        const c = new Date(cur);
+        cur = Date.UTC(c.getUTCFullYear(), c.getUTCMonth() + 1, 1);
+      }
+    } else {
+      for (let cur = tMin; cur <= tMax; cur += 7 * DAY_MS) ticks.push(cur);
+    }
+    const every = Math.ceil(ticks.length / Math.max(2, Math.floor(plotW / 70)));
+    ticks.filter((_, i) => i % every === 0).forEach(t => {
+      const label = svgEl('text', { x: x(t), y: H - 6, 'text-anchor': 'middle', 'font-size': 11 }, { fill: 'var(--text-secondary)' });
+      label.textContent = longRange
+        ? new Date(t).toLocaleDateString(undefined, { month: 'short', timeZone: 'UTC' })
+        : formatShortDate(new Date(t).toISOString().slice(0, 10));
+      svg.appendChild(label);
+    });
+
+    // series lines + end dots
+    const endLabels = [];
+    lifts.forEach(lift => {
+      const pts = byLift[lift].points;
+      if (pts.length > 1) {
+        const dAttr = pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.t).toFixed(1)},${y(toDisplay(p.e1)).toFixed(1)}`).join(' ');
+        svg.appendChild(svgEl('path', { d: dAttr, fill: 'none', 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' },
+          { stroke: LIFT_COLORS[lift] }));
+      }
+      const last = pts[pts.length - 1];
+      svg.appendChild(svgEl('circle', { cx: x(last.t), cy: y(toDisplay(last.e1)), r: 4, 'stroke-width': 2 },
+        { fill: LIFT_COLORS[lift], stroke: 'var(--surface)' }));
+      endLabels.push({ lift, last, y: y(toDisplay(last.e1)) });
+    });
+
+    // direct labels in the right margin, nudged apart so they never overlap
+    endLabels.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < endLabels.length; i++) endLabels[i].y = Math.max(endLabels[i].y, endLabels[i - 1].y + 15);
+    endLabels.forEach(l => {
+      const text = svgEl('text', { x: m.left + plotW + 10, y: l.y + 4, 'font-size': 12 });
+      const name = svgEl('tspan', {}, { fill: 'var(--text-secondary)' });
+      name.textContent = l.lift + ' ';
+      const val = svgEl('tspan', { 'font-weight': 600 }, { fill: 'var(--text)' });
+      val.textContent = Math.round(toDisplay(l.last.e1));
+      text.append(name, val);
+      svg.appendChild(text);
+    });
+
+    // hover layer: crosshair snaps to the nearest logged date; tooltip lists every lift
+    const dates = [...new Set(all.map(p => p.t))].sort((a, b) => a - b);
+    const cross = svgEl('line', { y1: m.top, y2: m.top + plotH, 'stroke-width': 1, visibility: 'hidden' }, { stroke: 'var(--text-secondary)' });
+    svg.appendChild(cross);
+    const hoverDots = {};
+    lifts.forEach(lift => {
+      hoverDots[lift] = svgEl('circle', { r: 4.5, 'stroke-width': 2, visibility: 'hidden' }, { fill: LIFT_COLORS[lift], stroke: 'var(--surface)' });
+      svg.appendChild(hoverDots[lift]);
+    });
+    const overlay = svgEl('rect', { x: m.left, y: m.top, width: plotW, height: plotH, fill: 'transparent', tabindex: 0, class: 'overlay',
+      'aria-label': 'Trend chart: use the left and right arrow keys to step through dates' });
+    svg.appendChild(overlay);
+    wrap.appendChild(svg);
+
+    const tip = document.createElement('div');
+    tip.className = 'chart-tip';
+    wrap.appendChild(tip);
+
+    let idx = -1;
+    function showAt(i) {
+      idx = Math.max(0, Math.min(dates.length - 1, i));
+      const t = dates[idx];
+      const cx = x(t);
+      cross.setAttribute('x1', cx);
+      cross.setAttribute('x2', cx);
+      cross.setAttribute('visibility', 'visible');
+
+      tip.innerHTML = '';
+      const head = document.createElement('div');
+      head.className = 'tip-date';
+      head.textContent = formatShortDate(new Date(t).toISOString().slice(0, 10));
+      tip.appendChild(head);
+      lifts.forEach(lift => {
+        // latest session of this lift on or before the hovered date
+        let p = null;
+        for (const q of byLift[lift].points) { if (q.t <= t) p = q; else break; }
+        const dot = hoverDots[lift];
+        const row = document.createElement('div');
+        row.className = 'tip-row';
+        const key = document.createElement('span');
+        key.className = 'tip-key';
+        key.style.background = LIFT_COLORS[lift];
+        const val = document.createElement('strong');
+        const name = document.createElement('span');
+        name.className = 'name';
+        if (p) {
+          dot.setAttribute('cx', x(p.t));
+          dot.setAttribute('cy', y(toDisplay(p.e1)));
+          dot.setAttribute('visibility', 'visible');
+          val.textContent = formatWhole(p.e1);
+          name.textContent = `${lift} · ${formatSet(p.set)}${p.t === t ? '' : ' · ' + formatShortDate(p.date)}`;
+        } else {
+          dot.setAttribute('visibility', 'hidden');
+          val.textContent = '—';
+          name.textContent = `${lift} · not logged yet`;
+        }
+        row.append(key, val, name);
+        tip.appendChild(row);
+      });
+      tip.style.display = 'block';
+      const scale = wrap.clientWidth / W;
+      const px = cx * scale;
+      const tipW = tip.offsetWidth;
+      tip.style.left = Math.max(0, px + 12 + tipW > wrap.clientWidth ? px - tipW - 12 : px + 12) + 'px';
+      tip.style.top = (m.top * scale) + 'px';
+    }
+    function hide() {
+      idx = -1;
+      cross.setAttribute('visibility', 'hidden');
+      Object.values(hoverDots).forEach(dt => dt.setAttribute('visibility', 'hidden'));
+      tip.style.display = 'none';
+    }
+    overlay.addEventListener('pointermove', e => {
+      const rect = svg.getBoundingClientRect();
+      const t = tMin + ((e.clientX - rect.left) * (W / rect.width) - m.left) / plotW * (tMax - tMin);
+      let best = 0;
+      dates.forEach((dt, i) => { if (Math.abs(dt - t) < Math.abs(dates[best] - t)) best = i; });
+      showAt(best);
+    });
+    overlay.addEventListener('pointerleave', hide);
+    overlay.addEventListener('blur', hide);
+    overlay.addEventListener('focus', () => showAt(dates.length - 1));
+    overlay.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') { showAt(idx - 1); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { showAt(idx + 1); e.preventDefault(); }
+      if (e.key === 'Escape') hide();
+    });
+  }
+  // redraw when the card's width changes so the chart stays crisp at any size
+  new ResizeObserver(() => {
+    const wrap = document.getElementById('trend-chart');
+    if (trendState && wrap.clientWidth && Math.abs(wrap.clientWidth - trendWidth) > 1) renderTrendChart(trendState);
+  }).observe(document.getElementById('trend-chart'));
 
   // ---- history ----
   async function renderHistory() {
@@ -706,11 +1141,11 @@
     const tbody = document.querySelector('#history-table tbody');
     tbody.innerHTML = '';
     sessions.forEach(s => {
-      const top = s.sets.reduce((max, set) => parseFloat(set.weight_lb) > parseFloat(max.weight_lb) ? set : max, s.sets[0]);
-      const dateOnly = s.session_date.slice(0, 10);
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${dateOnly}</td><td>${s.lift_type}</td><td>${s.sets.length}</td><td>${formatLb(top.weight_lb)} x ${top.reps}</td>
-        <td><button class="secondary" style="padding:4px 10px; font-size:12px; border-color:var(--accent); color:var(--accent);" onclick="deleteSession(${s.id})">Delete</button></td>`;
+      if (!s.sets.length) return;
+      const tr = fillRow(document.createElement('tr'),
+        [sessionDate(s), s.lift_type, s.sets.length, formatSet(heaviestSet(s.sets)), formatWhole(bestE1rmSet(s.sets).e1)]);
+      tr.insertAdjacentHTML('beforeend', `
+        <td><button class="secondary" style="padding:4px 10px; font-size:12px; border-color:var(--accent); color:var(--accent);" onclick="deleteSession(${s.id})">Delete</button></td>`);
       tbody.appendChild(tr);
     });
   }
@@ -732,11 +1167,16 @@
   }
 
   // ---- weight class ----
-  function getTargetClass() { return parseFloat(localStorage.getItem('targetClass')) || null; }
+  // demo keeps its own target so it never overwrites a real user's setting on the same browser
+  function targetClassKey() { return isDemo() ? 'demoTargetClass' : 'targetClass'; }
+  function getTargetClass() {
+    const stored = parseFloat(localStorage.getItem(targetClassKey()));
+    return stored || (isDemo() ? 93 : null);
+  }
   function saveTargetClass() {
     const value = parseFloat(document.getElementById('target-class').value);
     if (!value) { alert('Enter a target weight in kg.'); return; }
-    localStorage.setItem('targetClass', value);
+    localStorage.setItem(targetClassKey(), value);
     renderWeight();
   }
 
@@ -773,7 +1213,7 @@
       if (note) note.style.display = 'none';
       return;
     }
-      if (note) { note.style.display = 'block'; note.textcontent = direction === 'bulk' ? 'each plate = 5kg still to gain' : 'each plate = 5kg toward your target'; }
+      if (note) { note.style.display = 'block'; note.textContent =direction === 'bulk' ? 'each plate = 5kg still to gain' : 'each plate = 5kg toward your target'; }
     const plateCount = Math.ceil(toGo / 5);
     const shown = Math.min(plateCount, 10);
     for (let i = 0; i < shown; i++) {
@@ -928,13 +1368,11 @@
     const tbody = document.querySelector('#bd-table tbody');
     tbody.innerHTML = '';
     if (blockSessions.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);">No sessions logged in this block yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text-muted);">No sessions logged in this block yet.</td></tr>';
     } else {
-      blockSessions.forEach(s => {
-        const top = s.sets.reduce((max, set) => parseFloat(set.weight_lb) > parseFloat(max.weight_lb) ? set : max, s.sets[0]);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${s.session_date.slice(0, 10)}</td><td>${s.lift_type}</td><td>${s.sets.length}</td><td>${formatLb(top.weight_lb)} x ${top.reps}</td>`;
-        tbody.appendChild(tr);
+      blockSessions.filter(s => s.sets.length).forEach(s => {
+        tbody.appendChild(fillRow(document.createElement('tr'),
+          [sessionDate(s), s.lift_type, s.sets.length, formatSet(heaviestSet(s.sets)), formatWhole(bestE1rmSet(s.sets).e1)]));
       });
     }
 
@@ -1117,7 +1555,7 @@
     const reps = parseInt(document.getElementById('calc-reps').value);
     const unit = document.getElementById('calc-unit').value;
     if (!weight || !reps) { alert('Enter both a weight and a rep count.'); return; }
-    const estimate = Math.round(weight * (1 + reps / 30) * 10) / 10;
+    const estimate = Math.round(e1rm(weight, reps) * 10) / 10; // same formula the dashboard uses
     document.getElementById('calc-result').textContent = `Estimated 1RM: ${estimate} ${unit}`;
   }
 

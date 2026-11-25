@@ -4,6 +4,7 @@ const cors = require('cors');
 const pool = require('./db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { createDemoUser, isDemoEmail, DEMO_TTL_HOURS } = require('./demo');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,7 @@ function authenticateToken(req, res, next) {
 app.post('/api/register', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+  if (isDemoEmail(email)) return res.status(400).json({ error: 'That email domain is reserved' });
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
@@ -58,6 +60,18 @@ app.post('/api/login', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// no sign-up needed: a fresh throwaway account with sample training data
+app.post('/api/demo', async (req, res) => {
+  try {
+    const user = await createDemoUser(pool);
+    const token = jwt.sign({ id: user.id, demo: true }, JWT_SECRET, { expiresIn: `${DEMO_TTL_HOURS}h` });
+    res.status(201).json({ token, userId: user.id, demo: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Could not start demo' });
   }
 });
 
@@ -260,7 +274,7 @@ app.get('/api/prs', authenticateToken, async (req, res) => {
        FROM sessions s
        JOIN sets st ON st.session_id = s.id
        WHERE s.user_id = $1
-       ORDER BY s.lift_type, st.weight_lb DESC, s.session_date ASC`,
+       ORDER BY s.lift_type, st.weight_lb DESC, st.reps DESC, s.session_date ASC`,
       [req.user.id]
     );
     res.json(result.rows);
